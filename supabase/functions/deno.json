@@ -1,0 +1,52 @@
+{
+  "//": [
+    "Import map and Deno settings for all four Edge Functions.",
+    "",
+    "Supabase's docs prefer a deno.json per function directory, for dependency isolation.",
+    "One shared file is used here deliberately: the four functions are thin transport",
+    "wrappers over the same modules in api/ and src/lib/, so version-skewing them against",
+    "each other is not a feature -- it would mean the payment verifier and the order creator",
+    "could disagree about which supabase-js they run. Revisit if a function ever gains a",
+    "dependency the others do not have.",
+    "",
+    "The @vercel/node entry is type-only: api/*.ts do `import type { VercelRequest,",
+    "VercelResponse }` from that specifier. The import is erased at runtime, but deno check",
+    "still has to resolve it, so it is mapped to local structural types rather than the real",
+    "package -- which would drag a second @types/node into the graph. See",
+    "_shared/vercel-types.ts.",
+    "",
+    "compilerOptions mirror the strictness the root tsconfig.json applies to src/ and api/,",
+    "so deno check and `npm run typecheck` agree rather than each passing what the other",
+    "rejects. no-explicit-any is excluded from lint to match eslint: the handlers carry",
+    "deliberate `any`s at the Supabase and Razorpay payload boundaries, already accepted as",
+    "warnings in `npm run lint`, and failing a deploy over them would block on a style choice",
+    "that was reviewed and kept.",
+    "",
+    "Formatting here is prettier's job, via eslint, exactly as for src/ and tests/. Do not",
+    "run `deno fmt` on this directory: the two disagree on line breaks, so each would report",
+    "the other's output as wrong and `npm run lint` would never be clean. `deno lint` is",
+    "still useful and conflict-free -- it checks correctness, not layout.",
+    "",
+    "Pass explicitly on deploy, since a non-default location is not auto-detected:",
+    "  supabase functions deploy --import-map supabase/functions/deno.json"
+  ],
+
+  "imports": {
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2",
+    "@vercel/node": "./_shared/vercel-types.ts",
+    "@std/assert": "jsr:@std/assert@1"
+  },
+
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+
+  "lint": {
+    "rules": {
+      "exclude": ["no-explicit-any"]
+    }
+  }
+}

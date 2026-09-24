@@ -1,0 +1,6 @@
+{
+  "name": "Nike Hero Section",
+  "description": "A minimalist Nike hero section with navigation bar and framed canvas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

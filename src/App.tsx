@@ -114,6 +114,7 @@ function MainApp() {
     }
     setCurrentPage(page);
     setQueryParams(params);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
 
   useEffect(() => {
@@ -126,12 +127,15 @@ function MainApp() {
   }, [handleHashChange]);
 
   useEffect(() => {
-    // Refresh ScrollTrigger when page switches
+    // Immediately scroll to top and kill previous page triggers to prevent auto-scrolling
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+    ScrollTrigger.clearScrollMemory();
     const t = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 120);
     return () => clearTimeout(t);
-  }, [currentPage]);
+  }, [currentPage, queryParams]);
 
   const navigateTo = (target: string, params: Record<string, string> = {}) => {
     if (target === '#account' || target === 'account') {
@@ -177,7 +181,7 @@ function MainApp() {
       }
     }
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   };
 
   const renderPage = () => {

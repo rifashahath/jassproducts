@@ -55,7 +55,7 @@ export function mapAuthError(message: string | undefined): string {
   const m = message.toLowerCase();
   if (m.includes("invalid login credentials")) return "Incorrect email or password.";
   if (m.includes("email not confirmed")) {
-    return "Please confirm your email first — check your inbox for the verification link.";
+    return "Please confirm your email first: check your inbox for the verification link.";
   }
   if (m.includes("over request rate limit")) {
     return "Too many attempts. Please wait a minute and try again.";

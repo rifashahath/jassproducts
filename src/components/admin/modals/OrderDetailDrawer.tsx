@@ -158,7 +158,7 @@ export const OrderDetailDrawer: React.FC<OrderDetailDrawerProps> = ({
                     <MapPin className="h-4 w-4 text-[#8B6D43] shrink-0 mt-0.5" />
                     <span>
                       {order.shippingAddress.street}, {order.shippingAddress.city},{" "}
-                      {order.shippingAddress.state} — {order.shippingAddress.postalCode}
+                      {order.shippingAddress.state} - {order.shippingAddress.postalCode}
                     </span>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ export const OrderDetailDrawer: React.FC<OrderDetailDrawerProps> = ({
                               alt={item.name}
                               className="h-12 w-12 rounded-xl object-cover bg-[#F4EFE6] border border-[#D2C2AD]/40"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/products/shampoo-bottle-3d.jpg";
+                                (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.png";
                               }}
                             />
                           )}

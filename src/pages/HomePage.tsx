@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, ShoppingBag, ArrowRight, Star } from 'lucide-react';
 import { Product, fetchLiveProducts, products as defaultProducts } from '../lib/products';
+import { ProductCard } from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
 import { gsap, useGSAP } from '../lib/gsap';
 
-function toInr(usdPrice: number) {
-  const inr = Math.round(Math.round(usdPrice * 18) / 50) * 50 - 1;
-  const mrp = Math.round((inr * 1.28) / 50) * 50 - 1;
+function toInr(rawPrice: number) {
+  const inr = Math.round(rawPrice);
+  const mrp = Math.round(inr * 1.25);
   return {
     priceStr: `₹${inr.toLocaleString('en-IN')}`,
     mrpStr: `₹${mrp.toLocaleString('en-IN')}`,
@@ -178,38 +179,38 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
   const ritualSteps = [
     {
       num: '01',
-      title: 'HAIR CARE',
-      subtitle: 'JASS PRODUCTS\nHAIR CARE SOLUTIONS',
-      image: '/newcat-1.png',
+      title: 'Hair Cleanse',
+      subtitle: 'Herbal Anti-Dandruff Cleanser',
+      image: '/products/herbal-shampoo/main.png',
       category: 'Hair Care',
     },
     {
       num: '02',
-      title: 'SOAP',
-      subtitle: 'NATURAL HERBAL\nSOAP BAR',
-      image: '/newcat-soap.png',
-      category: 'Soap & Bath',
-    },
-    {
-      num: '03',
-      title: 'TREAT',
-      subtitle: 'RENEW\nSERUM',
-      image: '/newcat-2.png',
-      category: 'Skin Renewal',
-    },
-    {
-      num: '04',
-      title: 'HEALTH CARE',
-      subtitle: 'PURE POWDERS\nCOLLECTION',
-      image: '/newcat-3.png',
+      title: 'Inner Vitality',
+      subtitle: 'Organic Dehydrated Amla Superfood',
+      image: '/products/amla-powder/main.png',
       category: 'Health Care',
     },
     {
+      num: '03',
+      title: 'Radiance Gel',
+      subtitle: 'Kashmiri Saffron & Hyaluronic Elixir',
+      image: '/products/saffron-gel/main.png',
+      category: 'Skincare & Creams',
+    },
+    {
+      num: '04',
+      title: 'Night Repair',
+      subtitle: 'Intense Restorative Night Moisturizer',
+      image: '/products/night-cream/main.png',
+      category: 'Skincare & Creams',
+    },
+    {
       num: '05',
-      title: 'HYDRATE',
-      subtitle: 'HYDRATING\nCREAM',
-      image: '/newcat-4.png',
-      category: 'Face Nourish',
+      title: 'Sun Defense',
+      subtitle: 'Mineral Sunscreen Lotion SPF 50',
+      image: '/products/sunscreen/main.png',
+      category: 'Skincare & Creams',
     },
   ];
 
@@ -246,144 +247,99 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
       {/* The Daily Herbal Ritual Section */}
       <section className="gsap-ritual-section w-full px-4 sm:px-6 md:px-8 lg:px-12 pb-20 flex flex-col items-center relative z-10 bg-[#f7f5ef] rounded-b-[2rem] sm:rounded-b-[2.5rem] md:rounded-b-[3rem] pt-14 md:pt-20 lg:pt-24">
         <div className="gsap-ritual-header text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-5xl lg:text-6xl text-[#8b6d43] mb-3 tracking-wider font-serif uppercase">
+          <span className="text-[11px] font-mono tracking-[0.24em] uppercase text-[#8b6d43] font-semibold block mb-2.5">
+            5-Step Ayurvedic Regimen
+          </span>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl text-neutral-900 mb-3 tracking-wide font-serif font-normal">
             The Daily Herbal Ritual
           </h2>
-          <p className="text-xs md:text-sm font-medium text-neutral-600 tracking-[0.2em] uppercase">
-            Curated 5-Step Ayurvedic Routine
+          <p className="text-xs sm:text-sm text-neutral-600 max-w-lg mx-auto tracking-wide leading-relaxed font-light">
+            A cohesive morning-to-night sequence restoring physiological balance from scalp to skin.
           </p>
         </div>
 
-        <div className="gsap-ritual-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-7 w-full max-w-[1440px] mx-auto px-2">
-          {ritualSteps.map((step, idx) => (
-
-
+        <div className="gsap-ritual-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 lg:gap-6 w-full max-w-[1440px] mx-auto px-2">
+          {ritualSteps.map((step) => (
             <div
-              key={idx}
+              key={step.num}
               onClick={() => onNavigate('categories', { category: step.category })}
-              className="gsap-ritual-card flex flex-col bg-[#fbfbf8] border border-[#d2c2ad]/80 hover:border-[#8b6d43] rounded-[1.75rem] md:rounded-[2.25rem] p-3.5 sm:p-5 md:p-6 text-center shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer h-[420px] sm:h-[500px] md:h-[580px] lg:h-[640px] group"
+              className="gsap-ritual-card flex flex-col justify-between bg-[#fcfbf9] hover:bg-white border border-[#e8e2d8] hover:border-[#8b6d43]/50 rounded-2xl md:rounded-3xl p-5 md:p-6 text-center shadow-xs hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer group"
             >
-              {/* Top Text */}
-              <div className="mb-2 sm:mb-4">
-                <span className="text-[#9a7b4f] text-xs sm:text-sm md:text-base font-semibold tracking-wider">
-                  {step.num}
+              {/* Step Header */}
+              <div className="mb-2">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#8b6d43]/10 text-[#8b6d43] text-[10px] font-mono tracking-widest uppercase font-semibold mb-2">
+                  Step {step.num}
                 </span>
-                <h3 className="text-[#9a7b4f] group-hover:text-[#8b6d43] transition-colors text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif tracking-[0.1em] uppercase mt-1 mb-1 md:mb-1.5">
+                <h3 className="text-neutral-900 group-hover:text-[#8b6d43] transition-colors text-lg sm:text-xl font-serif font-medium tracking-wide mb-1">
                   {step.title}
                 </h3>
-                <p className="text-neutral-700 text-[11px] sm:text-[12px] md:text-[13px] tracking-[0.14em] uppercase whitespace-pre-line leading-snug">
+                <p className="text-neutral-500 text-xs font-light leading-snug line-clamp-1">
                   {step.subtitle}
                 </p>
               </div>
 
-              {/* Image */}
-              <div className="flex-1 w-full rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-b from-[#f9f8f4] to-[#ebe3d5] mb-3 md:mb-4 relative shadow-[inset_0_4px_12px_rgba(139,109,67,0.06)] group/img flex items-end justify-center p-2 sm:p-3">
+              {/* Product Image Canvas - Perfectly Centered, Proportional, and Elegant */}
+              <div className="w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#f5f1ea]/80 my-3 relative flex items-center justify-center p-5 group-hover:bg-[#f2ece2] transition-colors duration-500">
                 <img
                   src={step.image}
                   alt={step.title}
-                  style={{
-                    transform: `translateY(${Math.min(50, Math.max(0, (scrollY - 100) * 0.08))}px) scale(1.05)`,
-                    transformOrigin: 'bottom center',
-                  }}
-                  className="w-full h-full object-contain object-bottom mix-blend-darken contrast-[1.03] transition-transform duration-700 ease-out group-hover/img:scale-110 drop-shadow-sm"
+                  className="w-full h-full object-contain mix-blend-darken transition-transform duration-700 ease-out group-hover:scale-108 drop-shadow-xs"
                 />
               </div>
 
-              {/* Bottom CTA hint */}
-              <div className="mt-auto pt-1">
-                <p className="text-[#9a7b4f] text-[11px] sm:text-xs tracking-[0.18em] uppercase font-medium">
-                  Shop {step.title} →
-                </p>
+              {/* Bottom CTA Button */}
+              <div className="pt-2 w-full">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNavigate('categories', { category: step.category });
+                  }}
+                  className="w-full py-2.5 rounded-full border border-neutral-300 group-hover:border-[#8b6d43] text-neutral-800 group-hover:bg-[#8b6d43] group-hover:text-white text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
+                >
+                  <span>Explore Step</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </button>
               </div>
             </div>
-
-
           ))}
         </div>
       </section>
 
       {/* Apothecary Collection Section */}
       <section className="gsap-apothecary-section w-full px-4 sm:px-6 md:px-8 lg:px-12 py-16 md:py-24 flex flex-col items-center bg-[#f4f1ea]">
-        <div className="gsap-apothecary-header w-full max-w-[1400px] mx-auto mb-10 md:mb-14 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl text-[#8b6d43] tracking-wider font-serif uppercase">
-            Our Collection
+        <div className="gsap-apothecary-header w-full max-w-[1400px] mx-auto mb-12 md:mb-16 text-center">
+          <span className="text-[11px] font-mono tracking-[0.24em] uppercase text-[#8b6d43] font-semibold block mb-2.5">
+            Pure Botanical Dispensary
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl text-neutral-900 font-serif font-normal tracking-wide mb-3">
+            The Apothecary Collection
           </h2>
-          <p className="text-xs md:text-sm text-neutral-500 tracking-[0.1em] sm:text-right max-w-xs">
-            Handcrafted Ayurvedic formulas for hair, skin, and body
+          <p className="text-xs sm:text-sm text-neutral-600 max-w-lg mx-auto tracking-wide leading-relaxed font-light">
+            Cold-pressed botanical elixirs, targeted scalp oils, and restorative herbal balms crafted in small batches.
           </p>
         </div>
 
         {/* Products Grid */}
-        <div className="gsap-apothecary-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full max-w-[1400px] mx-auto">
+        <div className="gsap-apothecary-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-7 w-full max-w-[1400px] mx-auto">
           {catalogProducts.slice(0, 8).map((product) => (
-            <div
+            <ProductCard
               key={String(product.id)}
-              className="gsap-product-card group flex flex-col bg-[#fbfbf8] border border-[#d2c2ad] rounded-[1.75rem] p-5 text-center shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative"
-            >
-              {product.badge && (
-                <span className="absolute top-4 right-4 z-10 px-2.5 py-0.5 rounded-full bg-neutral-900 text-white text-[8px] font-bold tracking-widest uppercase shadow-sm">
-                  {product.badge}
-                </span>
-              )}
-              <div
-                onClick={() => onNavigate('product', { id: String(product.id) })}
-                className="w-full aspect-square rounded-2xl overflow-hidden bg-[#f4efe6] mb-4 relative flex items-center justify-center p-5 cursor-pointer"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-500 drop-shadow-sm"
-                />
-              </div>
-              <div className="flex flex-col flex-1 justify-between">
-
-                <div className="mb-3 text-left">
-                  <span className="text-[9px] font-mono tracking-[0.16em] uppercase text-neutral-400 block mb-0.5">
-                    Cold-Pressed Formulation
-                  </span>
-                  <h3
-                    onClick={() => onNavigate('product', { id: String(product.id) })}
-                    className="text-neutral-900 text-base font-serif font-bold tracking-wide uppercase mb-1 line-clamp-1 hover:text-[#8b6d43] transition-colors cursor-pointer"
-                  >
-                    {product.name}
-                  </h3>
-                  <div className="flex items-center justify-between my-2 pt-2 border-t border-neutral-200/80">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-serif font-bold text-[#8b6d43]">
-                        {toInr(product.price).priceStr}
-                      </span>
-                      <span className="text-xs text-neutral-400 line-through font-mono">
-                        {toInr(product.price).mrpStr}
-                      </span>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-600">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block"></span>
-                      In stock
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => addToCart(product, 1)}
-                  className="w-full py-2.5 rounded-full bg-[#8b6d43] hover:bg-[#735835] text-white text-xs font-bold uppercase tracking-widest transition-all duration-200 cursor-pointer shadow-sm flex items-center justify-center gap-2"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>Add to Bag</span>
-                </button>
-              </div>
-            </div>
+              product={product}
+              onNavigate={onNavigate}
+              className="gsap-product-card"
+            />
           ))}
         </div>
 
-        <div className="gsap-apothecary-cta mt-12">
+        <div className="gsap-apothecary-cta mt-14 sm:mt-16">
           <button
             type="button"
             onClick={() => onNavigate('categories')}
-            className="px-8 py-3.5 rounded-full border-2 border-[#8b6d43] text-[#8b6d43] hover:bg-[#8b6d43] hover:text-white text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer flex items-center gap-2"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white text-xs font-semibold tracking-[0.18em] uppercase transition-all duration-300 cursor-pointer shadow-2xs hover:shadow-md"
           >
-            <span>View Complete Apothecary Catalog</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Explore All Formulations</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </section>

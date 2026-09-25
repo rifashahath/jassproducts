@@ -74,7 +74,7 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
             alt={row.name}
             className="h-10 w-10 rounded-xl object-cover bg-[#F4EFE6] border border-[#D2C2AD]/50 shrink-0"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = "/products/shampoo-bottle-3d.jpg";
+              (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.png";
             }}
           />
           <div>

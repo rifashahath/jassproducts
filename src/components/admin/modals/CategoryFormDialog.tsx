@@ -18,7 +18,7 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("/products/shampoo-bottle-3d.jpg");
+  const [image, setImage] = useState("/products/herbal-shampoo/main.png");
   const [displayOrder, setDisplayOrder] = useState<number>(1);
   const [status, setStatus] = useState<CategoryItem["status"]>("ACTIVE");
 
@@ -27,14 +27,14 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
       setName(categoryItem.name || "");
       setSlug(categoryItem.slug || "");
       setDescription(categoryItem.description || "");
-      setImage(categoryItem.image || "/products/shampoo-bottle-3d.jpg");
+      setImage(categoryItem.image || "/products/herbal-shampoo/main.png");
       setDisplayOrder(categoryItem.displayOrder || 1);
       setStatus(categoryItem.status || "ACTIVE");
     } else {
       setName("");
       setSlug("");
       setDescription("");
-      setImage("/products/shampoo-bottle-3d.jpg");
+      setImage("/products/herbal-shampoo/main.png");
       setDisplayOrder(1);
       setStatus("ACTIVE");
     }
@@ -157,7 +157,7 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
               type="text"
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              placeholder="/products/shampoo-bottle-3d.jpg"
+              placeholder="/products/herbal-shampoo/main.png"
               className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
             />
           </div>

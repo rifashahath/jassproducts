@@ -26,7 +26,6 @@ export const SUPABASE_ANON_KEY = getEnv("VITE_SUPABASE_ANON_KEY") || getEnv("SUP
 export const isSupabaseConfigured = Boolean(
   SUPABASE_URL &&
   SUPABASE_ANON_KEY &&
-  !SUPABASE_URL.includes("duxjhmhgiacmuuqzfjxs") &&
   !SUPABASE_URL.includes("unconfigured")
 );
 

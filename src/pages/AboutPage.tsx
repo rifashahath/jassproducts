@@ -86,7 +86,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
               "Ayurveda is the art of living in harmony with nature's rhythm."
             </p>
             <span className="text-[10px] uppercase tracking-widest text-[#8b6d43] font-semibold">
-              — Jass Botanical Apothecary
+              Jass Botanical Apothecary
             </span>
           </div>
         </div>

@@ -184,7 +184,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
         setCheckoutError(
           e instanceof Error
             ? e.message
-            : 'Payment verification failed. Please contact support before retrying — do not pay again.',
+            : 'Payment verification failed. Please contact support before retrying; do not pay again.',
         );
         setIsProcessing(false);
         setPaymentStage(null);
@@ -259,7 +259,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
           ondismiss: () => {
             setIsProcessing(false);
             setPaymentStage(null);
-            setCheckoutError('Payment window was closed before completion. Your order has NOT been placed — you can retry safely.');
+            setCheckoutError('Payment window was closed before completion. Your order has NOT been placed. You can retry safely.');
           },
         },
       });

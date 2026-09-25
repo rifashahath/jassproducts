@@ -273,7 +273,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose, onN
                 <div key={order.id} className="p-4 rounded-2xl border border-[#d2c2ad]/50 bg-white">
                   <div className="flex justify-between items-start mb-1.5">
                     <span className="font-mono text-xs font-bold text-neutral-900">{order.id}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#f4efe6] text-[#8b6d43]">{order.status ?? '—'}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#f4efe6] text-[#8b6d43]">{order.status ?? '-'}</span>
                   </div>
                   <p className="text-[11px] text-neutral-500 truncate mb-1">{order.items_summary ?? ''}</p>
                   <div className="flex justify-between items-center">

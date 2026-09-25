@@ -96,7 +96,7 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({
                   alt={cat.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/products/shampoo-bottle-3d.jpg";
+                    (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.png";
                   }}
                 />
                 <span className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-black/60 text-white backdrop-blur-xs font-mono">

@@ -165,8 +165,8 @@ export const TrackOrderPage: React.FC<TrackOrderPageProps> = ({ initialOrderId, 
           <Package className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
           <h2 className="font-serif text-xl text-neutral-900 mb-2">Order not found</h2>
           <p className="text-xs text-neutral-500 max-w-sm mx-auto leading-relaxed">
-            No order matches “{searchedId}”. Double-check the reference from your confirmation screen
-            — it looks like <span className="font-mono">VRD-XXXXXX</span>. If you just placed the order,
+            No order matches “{searchedId}”. Double-check the reference from your confirmation screen,
+            which looks like <span className="font-mono">VRD-XXXXXX</span>. If you just placed the order,
             give it a few seconds and try again.
           </p>
         </div>

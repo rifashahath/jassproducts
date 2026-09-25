@@ -186,7 +186,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (seq !== revalidateSeq.current) return; // superseded
       if (res.status === 429) {
         setServerPricing(null);
-        setPricingError('Checking prices too often — please wait a moment.');
+        setPricingError('Checking prices too often, please wait a moment.');
         return;
       }
       const data = await readJsonResponse<ServerPricing>(res, 'revalidate-cart');

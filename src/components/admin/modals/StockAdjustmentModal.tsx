@@ -111,7 +111,7 @@ export const StockAdjustmentModal: React.FC<StockAdjustmentModalProps> = ({
             >
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name} ({p.sku}) — Current: {p.stockQuantity} in stock
+                  {p.name} ({p.sku}) - Current: {p.stockQuantity} in stock
                 </option>
               ))}
             </select>

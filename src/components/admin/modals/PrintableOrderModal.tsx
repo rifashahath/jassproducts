@@ -90,7 +90,7 @@ export const PrintableOrderModal: React.FC<PrintableOrderModalProps> = ({
               <p className="font-bold text-sm text-neutral-900">{order.customerName}</p>
               <p className="text-neutral-600 mt-0.5">{order.shippingAddress.street}</p>
               <p className="text-neutral-600">
-                {order.shippingAddress.city}, {order.shippingAddress.state} — {order.shippingAddress.postalCode}
+                {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.postalCode}
               </p>
               <p className="text-neutral-600 mt-1">Phone: {order.phone}</p>
               <p className="text-neutral-600">Email: {order.email}</p>

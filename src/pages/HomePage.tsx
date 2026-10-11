@@ -3,7 +3,7 @@ import { Play, ShoppingBag, ArrowRight, Star } from 'lucide-react';
 import { Product, fetchLiveProducts, products as defaultProducts } from '../lib/products';
 import { ProductCard } from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
-import { gsap, useGSAP } from '../lib/gsap';
+import { gsap, ScrollTrigger, useGSAP } from '../lib/gsap';
 
 function toInr(rawPrice: number) {
   const inr = Math.round(rawPrice);
@@ -28,129 +28,58 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
 
   useGSAP(
     () => {
+      // Use gsap.from() with immediateRender:false so elements stay visible
+      // at their natural CSS state until ScrollTrigger fires. Unlike fromTo(),
+      // this does NOT set opacity:0 on mount — preventing blank sections.
+
       // 1. Daily Herbal Ritual Header
-      gsap.fromTo(
-        '.gsap-ritual-header',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.gsap-ritual-section',
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.from('.gsap-ritual-header', {
+        opacity: 0, y: 30, duration: 0.9, ease: 'power3.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.gsap-ritual-section', start: 'top 90%', once: true },
+      });
 
       // 2. Ritual Cards Stagger
-      gsap.fromTo(
-        '.gsap-ritual-card',
-        { opacity: 0, y: 45, scale: 0.96 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.85,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.gsap-ritual-grid',
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.from('.gsap-ritual-card', {
+        opacity: 0, y: 45, scale: 0.96, duration: 0.85, stagger: 0.1, ease: 'power3.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.gsap-ritual-grid', start: 'top 90%', once: true },
+      });
 
       // 3. Apothecary Header
-      gsap.fromTo(
-        '.gsap-apothecary-header',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.gsap-apothecary-section',
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.from('.gsap-apothecary-header', {
+        opacity: 0, y: 30, duration: 0.9, ease: 'power3.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.gsap-apothecary-section', start: 'top 90%', once: true },
+      });
 
       // 4. Apothecary Product Cards
-      gsap.fromTo(
-        '.gsap-product-card',
-        { opacity: 0, y: 35 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.75,
-          stagger: 0.08,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.gsap-apothecary-grid',
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.from('.gsap-product-card', {
+        opacity: 0, y: 35, duration: 0.75, stagger: 0.08, ease: 'power2.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.gsap-apothecary-grid', start: 'top 90%', once: true },
+      });
 
       // 5. Apothecary CTA
-      gsap.fromTo(
-        '.gsap-apothecary-cta',
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.gsap-apothecary-cta',
-            start: 'top 92%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.from('.gsap-apothecary-cta', {
+        opacity: 0, y: 20, duration: 0.7, ease: 'power2.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.gsap-apothecary-cta', start: 'top 95%', once: true },
+      });
 
       // 6. Video Shorts Header
-      gsap.fromTo(
-        '.gsap-video-header',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.gsap-video-section',
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.from('.gsap-video-header', {
+        opacity: 0, y: 30, duration: 0.9, ease: 'power3.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.gsap-video-section', start: 'top 90%', once: true },
+      });
 
       // 7. Video Shorts Cards
-      gsap.fromTo(
-        '.gsap-video-card',
-        { opacity: 0, y: 40, scale: 0.96 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.gsap-video-grid',
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.from('.gsap-video-card', {
+        opacity: 0, y: 40, scale: 0.96, duration: 0.8, stagger: 0.1, ease: 'power2.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: '.gsap-video-grid', start: 'top 90%', once: true },
+      });
     },
     { scope: homeContainerRef, dependencies: [catalogProducts] }
   );
@@ -173,6 +102,18 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
     loadCatalog();
     return () => {
       isMounted = false;
+    };
+  }, []);
+
+  // Ensure ScrollTrigger re-evaluates after the hero section renders and any
+  // App-level trigger.kill() calls have settled. Without this, sections that
+  // start at opacity:0 via fromTo() stay invisible on initial page load.
+  useEffect(() => {
+    const t1 = setTimeout(() => ScrollTrigger.refresh(), 150);
+    const t2 = setTimeout(() => ScrollTrigger.refresh(), 600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, []);
 

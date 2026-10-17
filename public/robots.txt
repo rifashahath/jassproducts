@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /checkout
+Disallow: /track-order
+Disallow: /orders
+
+Sitemap: https://jassproducts.in/sitemap.xml

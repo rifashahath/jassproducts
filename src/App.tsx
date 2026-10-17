@@ -22,10 +22,13 @@ import { TrackOrderPage } from './pages/TrackOrderPage';
 import { FaqPage } from './pages/FaqPage';
 import { PoliciesPage } from './pages/PoliciesPage';
 import { AdminPage } from './pages/AdminPage';
+import { products as defaultProducts } from './lib/products';
 
 function parseHash(rawHash?: string): { page: string; params: Record<string, string> } {
-  const source = rawHash !== undefined ? rawHash : (typeof window !== 'undefined' ? window.location.hash : '');
-  const hash = source.replace(/^#\/?/, '');
+  const source = rawHash !== undefined
+    ? rawHash
+    : (typeof window !== 'undefined' ? (window.location.hash || window.location.pathname) : '');
+  const hash = source.replace(/^#\/?/, '').replace(/^\/+|\/+$/g, '');
   if (!hash || hash === 'home') {
     return { page: 'home', params: {} };
   }
@@ -135,6 +138,62 @@ function MainApp() {
       ScrollTrigger.refresh();
     }, 120);
     return () => clearTimeout(t);
+  }, [currentPage, queryParams]);
+
+  useEffect(() => {
+    const product = currentPage === 'product'
+      ? defaultProducts.find((item) => String(item.id) === String(queryParams.id))
+      : undefined;
+    const pageMeta: Record<string, { title: string; description: string; path: string }> = {
+      home: {
+        title: 'Jass Products | Ayurvedic Hair Care & Natural Skincare India',
+        description: 'Shop Jass Products for Ayurvedic hair care, natural skincare, herbal powders, sunscreen, creams, and botanical wellness products in India.',
+        path: '/',
+      },
+      categories: {
+        title: 'Shop Natural Hair Care, Skincare & Wellness | Jass Products',
+        description: 'Explore Jass Products natural hair care, Ayurvedic skincare, herbal powders, lip care, sunscreen, and botanical wellness collection.',
+        path: '/categories',
+      },
+      about: {
+        title: 'About Jass Products | Botanical & Ayurvedic Care',
+        description: 'Learn about Jass Products and our botanical approach to Ayurvedic hair care, skincare, and everyday wellness in India.',
+        path: '/about',
+      },
+      contact: {
+        title: 'Contact Jass Products | Customer Care India',
+        description: 'Contact Jass Products for help with orders, product questions, delivery, returns, and Ayurvedic care routines.',
+        path: '/contact',
+      },
+      faq: {
+        title: 'Jass Products FAQ | Shipping, Returns & Product Care',
+        description: 'Find answers about Jass Products shipping, returns, delivery times, product use, and customer support.',
+        path: '/faq',
+      },
+      policies: {
+        title: 'Jass Products Policies | Privacy, Terms & Returns',
+        description: 'Read Jass Products privacy policy, terms of service, shipping, returns, and customer order policies.',
+        path: '/policies',
+      },
+    };
+    const meta = product
+      ? {
+          title: `${product.name} | Jass Products India`,
+          description: `${product.description} Shop ${product.name} from Jass Products in India.`,
+          path: `/product/${product.id}`,
+        }
+      : pageMeta[currentPage] || pageMeta.home;
+
+    document.title = meta.title;
+    const description = document.querySelector('meta[name="description"]');
+    description?.setAttribute('content', meta.description);
+    const canonical = document.querySelector('link[rel="canonical"]');
+    canonical?.setAttribute('href', `${window.location.origin}${meta.path}`);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', meta.title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', meta.description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', `${window.location.origin}${meta.path}`);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', meta.title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', meta.description);
   }, [currentPage, queryParams]);
 
   const navigateTo = (target: string, params: Record<string, string> = {}) => {

@@ -1,7 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "jassproducts",
-  "account_id": "6476cf669b35b8ba61d2ab5d25089ce4",
   "compatibility_date": "2026-09-24",
   "assets": {
     "directory": "./dist",

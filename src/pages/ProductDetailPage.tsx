@@ -246,6 +246,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
               <img
                 src={selectedImage}
                 alt={product.name}
+                loading="eager"
+                decoding="async"
+                width="600"
+                height="600"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src.endsWith('.webp')) {
+                    target.src = target.src.replace(/\.webp$/, '.png');
+                  }
+                }}
                 className="w-full h-full object-contain mix-blend-darken transition-transform duration-700 ease-out group-hover:scale-105 drop-shadow-md"
               />
               {product.volume && (
@@ -269,7 +279,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                         : 'border-[#e8e2d8] hover:border-neutral-400 opacity-80 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-contain mix-blend-darken" />
+                    <img
+                      src={img}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      width="80"
+                      height="80"
+                      className="w-full h-full object-contain mix-blend-darken"
+                    />
                   </button>
                 ))}
               </div>

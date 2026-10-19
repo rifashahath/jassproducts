@@ -76,8 +76,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
         <div className="relative">
           <div className="w-full aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-b from-[#ebe3d5] to-[#f4f1ea] border border-[#d2c2ad]/50 shadow-xl relative p-4 flex items-center justify-center">
             <img
-              src="/image.png"
+              src="/image.webp"
               alt="Jass Herbal Sourcing"
+              loading="lazy"
+              decoding="async"
+              width="600"
+              height="750"
               className="w-full h-full object-cover rounded-2xl filter contrast-[1.05]"
             />
           </div>

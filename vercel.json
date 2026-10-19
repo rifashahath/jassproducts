@@ -17,6 +17,34 @@
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
+    },
+    {
+      "source": "/(products/.*|assets/.*|.*\\.(?:webp|png|jpg|jpeg|svg|css|js|woff2?))",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/products/:path*.png",
+      "destination": "/products/:path*.webp",
+      "permanent": true
+    },
+    {
+      "source": "/products/:path*.jpg",
+      "destination": "/products/:path*.webp",
+      "permanent": true
+    },
+    {
+      "source": "/products/:path*.jpeg",
+      "destination": "/products/:path*.webp",
+      "permanent": true
+    },
+    {
+      "source": "/:name(image|img-[0-9]+).png",
+      "destination": "/:name.webp",
+      "permanent": true
     }
   ]
 }

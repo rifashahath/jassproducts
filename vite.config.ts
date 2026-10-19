@@ -1,10 +1,29 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import fs from 'fs';
 import dotenv from 'dotenv';
 import {defineConfig, Plugin} from 'vite';
 
 dotenv.config();
+
+function webpDevPlugin(): Plugin {
+  return {
+    name: 'webp-dev-plugin',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url && (req.url.startsWith('/products/') || req.url.match(/^\/(image|img-[0-9]+)\.(png|jpe?g)/i))) {
+          const webpUrl = req.url.replace(/\.(png|jpe?g)$/i, '.webp');
+          const filePath = path.resolve(__dirname, 'public', webpUrl.replace(/^\//, '').split('?')[0]);
+          if (fs.existsSync(filePath)) {
+            req.url = webpUrl;
+          }
+        }
+        next();
+      });
+    },
+  };
+}
 
 function apiDevPlugin(): Plugin {
   return {
@@ -73,7 +92,7 @@ function apiDevPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), apiDevPlugin()],
+    plugins: [react(), tailwindcss(), apiDevPlugin(), webpDevPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
@@ -82,6 +101,19 @@ export default defineConfig(() => {
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'gsap-vendor': ['gsap', '@gsap/react'],
+            'lucide-vendor': ['lucide-react'],
+            'supabase-vendor': ['@supabase/supabase-js'],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 600,
     },
   };
 });

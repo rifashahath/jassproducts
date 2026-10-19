@@ -76,7 +76,7 @@ export const BannersView: React.FC<BannersViewProps> = ({
                   alt={banner.title}
                   className="w-full h-full object-cover opacity-75"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/img-2.png";
+                    (e.target as HTMLImageElement).src = "/img-2.webp";
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-4 flex flex-col justify-end">

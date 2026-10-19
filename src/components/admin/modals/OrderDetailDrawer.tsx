@@ -178,7 +178,7 @@ export const OrderDetailDrawer: React.FC<OrderDetailDrawerProps> = ({
                               alt={item.name}
                               className="h-12 w-12 rounded-xl object-cover bg-[#F4EFE6] border border-[#D2C2AD]/40"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.png";
+                                (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.webp";
                               }}
                             />
                           )}

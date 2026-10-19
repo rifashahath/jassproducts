@@ -77,8 +77,24 @@ function MainApp() {
   });
   const [currentSlide, setCurrentSlide] = useState(0);
   const [scrollY, setScrollY] = useState(0);
-  const slides = ['/image.png', '/img-2.png', '/img-3.png', '/img-4.png'];
+  const slides = ['/image.webp', '/img-2.webp', '/img-3.webp', '/img-4.webp'];
   const heroRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 45) {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    } else if (diff < -45) {
+      setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    }
+    touchStartX.current = null;
+  };
 
   useGSAP(
     () => {
@@ -322,7 +338,7 @@ function MainApp() {
           /* Outer Card Frame */
           <div
             id="hero-card"
-            className="w-full h-[95vh] min-h-[640px] flex flex-col relative"
+            className="w-full h-[60vh] sm:h-[75vh] md:h-[92vh] min-h-[400px] sm:min-h-[500px] md:min-h-[640px] flex flex-col relative"
           >
             {/* Navigation Bar */}
             <Navbar
@@ -335,15 +351,22 @@ function MainApp() {
             <div
               ref={heroRef}
               id="hero-canvas-container"
-              className="flex-1 mx-1.5 sm:mx-3 md:mx-4 mb-3 sm:mb-6 md:mb-8 rounded-[1.25rem] sm:rounded-[1.75rem] md:rounded-[2rem] relative overflow-hidden flex items-center justify-center bg-neutral-100 shadow-inner"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              className="flex-1 mx-1.5 sm:mx-3 md:mx-4 mb-3 sm:mb-6 md:mb-8 rounded-[1.25rem] sm:rounded-[1.75rem] md:rounded-[2rem] relative overflow-hidden flex items-center justify-center bg-neutral-100 shadow-inner select-none touch-pan-y"
             >
               {slides.map((src, index) => (
                 <img
                   key={src}
                   src={src}
                   alt={`Hero Graphic ${index + 1}`}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={index === 0 ? 'high' : 'low'}
+                  decoding="async"
+                  width="1024"
+                  height="434"
                   style={{
-                    transform: `translateY(${scrollY * 0.25}px) scale(1.02)`,
+                    transform: `translateY(${scrollY * 0.2}px) scale(1.01)`,
                     transformOrigin: 'top center',
                   }}
                   className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${
@@ -353,7 +376,7 @@ function MainApp() {
               ))}
 
               {/* Slide Navigation Indicator Dots */}
-              <div className="absolute bottom-6 sm:bottom-8 inset-x-0 flex justify-center items-center gap-2.5 z-20">
+              <div className="absolute bottom-5 sm:bottom-8 inset-x-0 flex justify-center items-center gap-2.5 z-20">
                 {slides.map((_, idx) => (
                   <button
                     key={idx}

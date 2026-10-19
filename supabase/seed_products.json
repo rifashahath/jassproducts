@@ -13,14 +13,14 @@
     "is_featured": true,
     "is_active": true,
     "badge": "100% Organic",
-    "image": "/products/amla-powder/main.png",
-    "hover_image": "/products/amla-powder/gallery-1.jpg",
+    "image": "/products/amla-powder/main.webp",
+    "hover_image": "/products/amla-powder/gallery-1.webp",
     "gallery": [
-      "/products/amla-powder/main.png",
-      "/products/amla-powder/gallery-1.jpg",
-      "/products/amla-powder/gallery-2.jpg",
-      "/products/amla-powder/gallery-3.jpg",
-      "/products/amla-powder/gallery-4.png"
+      "/products/amla-powder/main.webp",
+      "/products/amla-powder/gallery-1.webp",
+      "/products/amla-powder/gallery-2.webp",
+      "/products/amla-powder/gallery-3.webp",
+      "/products/amla-powder/gallery-4.webp"
     ],
     "description": "Pure shade-dried Indian gooseberry (Amla) powder packed with natural Vitamin C, bioflavonoids, and antioxidants. Supports immune vitality, radiant skin, and natural hair strengthening.",
     "note": "Daily health and hair nourishment powder"
@@ -39,14 +39,14 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Beta-Carotene Rich",
-    "image": "/products/carrot-powder/main.png",
-    "hover_image": "/products/carrot-powder/gallery-1.jpg",
+    "image": "/products/carrot-powder/main.webp",
+    "hover_image": "/products/carrot-powder/gallery-1.webp",
     "gallery": [
-      "/products/carrot-powder/main.png",
-      "/products/carrot-powder/gallery-1.jpg",
-      "/products/carrot-powder/gallery-2.jpg",
-      "/products/carrot-powder/gallery-3.jpg",
-      "/products/carrot-powder/gallery-4.jpg"
+      "/products/carrot-powder/main.webp",
+      "/products/carrot-powder/gallery-1.webp",
+      "/products/carrot-powder/gallery-2.webp",
+      "/products/carrot-powder/gallery-3.webp",
+      "/products/carrot-powder/gallery-4.webp"
     ],
     "description": "Premium farm-fresh dehydrated carrot powder rich in provitamin A and carotenoids. Nourishes skin from within, enhances complexion, and promotes cell vitality.",
     "note": "Convenient natural carrot goodness"
@@ -65,14 +65,14 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Energy & Glow",
-    "image": "/products/beetroot-powder/main.png",
-    "hover_image": "/products/beetroot-powder/gallery-1.png",
+    "image": "/products/beetroot-powder/main.webp",
+    "hover_image": "/products/beetroot-powder/gallery-1.webp",
     "gallery": [
-      "/products/beetroot-powder/main.png",
-      "/products/beetroot-powder/gallery-1.png",
-      "/products/beetroot-powder/gallery-2.jpg",
-      "/products/beetroot-powder/gallery-3.jpg",
-      "/products/beetroot-powder/gallery-4.jpg"
+      "/products/beetroot-powder/main.webp",
+      "/products/beetroot-powder/gallery-1.webp",
+      "/products/beetroot-powder/gallery-2.webp",
+      "/products/beetroot-powder/gallery-3.webp",
+      "/products/beetroot-powder/gallery-4.webp"
     ],
     "description": "100% pure ruby beetroot powder teeming with natural dietary nitrates, iron, and betalains. Supports stamina, blood purification, and a natural rosy skin flush.",
     "note": "Daily vitality and natural flush"
@@ -91,14 +91,14 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Miracle Superfood",
-    "image": "/products/moringa-powder/main.png",
-    "hover_image": "/products/moringa-powder/gallery-1.png",
+    "image": "/products/moringa-powder/main.webp",
+    "hover_image": "/products/moringa-powder/gallery-1.webp",
     "gallery": [
-      "/products/moringa-powder/main.png",
-      "/products/moringa-powder/gallery-1.png",
-      "/products/moringa-powder/gallery-2.png",
-      "/products/moringa-powder/gallery-3.jpg",
-      "/products/moringa-powder/gallery-4.png"
+      "/products/moringa-powder/main.webp",
+      "/products/moringa-powder/gallery-1.webp",
+      "/products/moringa-powder/gallery-2.webp",
+      "/products/moringa-powder/gallery-3.webp",
+      "/products/moringa-powder/gallery-4.webp"
     ],
     "description": "Handpicked organic drumstick leaf (Moringa Oleifera) powder loaded with 90+ nutrients, minerals, amino acids, and iron for sustained clean vitality and holistic immunity.",
     "note": "Complete herbal wellness powerhouse"
@@ -117,12 +117,12 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Best Seller",
-    "image": "/products/herbal-shampoo/main.png",
-    "hover_image": "/products/herbal-shampoo/gallery-1.png",
+    "image": "/products/herbal-shampoo/main.webp",
+    "hover_image": "/products/herbal-shampoo/gallery-1.webp",
     "gallery": [
-      "/products/herbal-shampoo/main.png",
-      "/products/herbal-shampoo/gallery-1.png",
-      "/products/herbal-shampoo/gallery-2.jpg"
+      "/products/herbal-shampoo/main.webp",
+      "/products/herbal-shampoo/gallery-1.webp",
+      "/products/herbal-shampoo/gallery-2.webp"
     ],
     "description": "Gentle botanical shampoo formulated with rosemary, neem, shikakai, and soothing aloe to effectively remove dandruff flakes, clarify roots, and restore lustrous hair softness.",
     "note": "Sulfate & paraben free formula"
@@ -141,12 +141,12 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Overnight Renewal",
-    "image": "/products/night-cream/main.png",
-    "hover_image": "/products/night-cream/gallery-1.png",
+    "image": "/products/night-cream/main.webp",
+    "hover_image": "/products/night-cream/gallery-1.webp",
     "gallery": [
-      "/products/night-cream/main.png",
-      "/products/night-cream/gallery-1.png",
-      "/products/night-cream/gallery-2.png"
+      "/products/night-cream/main.webp",
+      "/products/night-cream/gallery-1.webp",
+      "/products/night-cream/gallery-2.webp"
     ],
     "description": "Deeply nourishing overnight barrier restorative treatment enriched with restorative botanicals, ceramides, and natural lipid complexes for waking up to plush, rested skin.",
     "note": "Overnight barrier restoration"
@@ -165,12 +165,12 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Broad Spectrum SPF 50",
-    "image": "/products/sunscreen/main.png",
-    "hover_image": "/products/sunscreen/gallery-1.png",
+    "image": "/products/sunscreen/main.webp",
+    "hover_image": "/products/sunscreen/gallery-1.webp",
     "gallery": [
-      "/products/sunscreen/main.png",
-      "/products/sunscreen/gallery-1.png",
-      "/products/sunscreen/gallery-2.jpg"
+      "/products/sunscreen/main.webp",
+      "/products/sunscreen/gallery-1.webp",
+      "/products/sunscreen/gallery-2.webp"
     ],
     "description": "Ultra-lightweight, non-greasy broad spectrum sunscreen featuring mineral zinc and botanical antioxidants. Shielding against UVA/UVB rays without leaving any white cast.",
     "note": "Zero white-cast mineral protection"
@@ -189,12 +189,12 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Spot Corrector",
-    "image": "/products/pigmentation-cream/main.jpg",
-    "hover_image": "/products/pigmentation-cream/gallery-1.jpg",
+    "image": "/products/pigmentation-cream/main.webp",
+    "hover_image": "/products/pigmentation-cream/gallery-1.webp",
     "gallery": [
-      "/products/pigmentation-cream/main.jpg",
-      "/products/pigmentation-cream/gallery-1.jpg",
-      "/products/pigmentation-cream/gallery-2.jpg"
+      "/products/pigmentation-cream/main.webp",
+      "/products/pigmentation-cream/gallery-1.webp",
+      "/products/pigmentation-cream/gallery-2.webp"
     ],
     "description": "Targeted brightening and melanin-balancing formula crafted with licorice root, niacinamide, and wild turmeric to visibly fade stubborn sun spots, acne marks, and hyperpigmentation.",
     "note": "Clinically inspired botanical actives"
@@ -213,13 +213,13 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Vitamin C Boost",
-    "image": "/products/vitamin-c-cream/main.jpg",
-    "hover_image": "/products/vitamin-c-cream/gallery-1.jpg",
+    "image": "/products/vitamin-c-cream/main.webp",
+    "hover_image": "/products/vitamin-c-cream/gallery-1.webp",
     "gallery": [
-      "/products/vitamin-c-cream/main.jpg",
-      "/products/vitamin-c-cream/gallery-1.jpg",
-      "/products/vitamin-c-cream/gallery-2.jpg",
-      "/products/vitamin-c-cream/gallery-3.jpg"
+      "/products/vitamin-c-cream/main.webp",
+      "/products/vitamin-c-cream/gallery-1.webp",
+      "/products/vitamin-c-cream/gallery-2.webp",
+      "/products/vitamin-c-cream/gallery-3.webp"
     ],
     "description": "Energizing daily moisturizer infused with stable botanical Vitamin C and antioxidant berry oils. Revitalizes dull complexion, shields from oxidative stress, and locks in dewy hydration.",
     "note": "Antioxidant day shield and radiance"
@@ -238,12 +238,12 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Firm & Lift",
-    "image": "/products/anti-aging-cream/main.png",
-    "hover_image": "/products/anti-aging-cream/gallery-1.png",
+    "image": "/products/anti-aging-cream/main.webp",
+    "hover_image": "/products/anti-aging-cream/gallery-1.webp",
     "gallery": [
-      "/products/anti-aging-cream/main.png",
-      "/products/anti-aging-cream/gallery-1.png",
-      "/products/anti-aging-cream/gallery-2.png"
+      "/products/anti-aging-cream/main.webp",
+      "/products/anti-aging-cream/gallery-1.webp",
+      "/products/anti-aging-cream/gallery-2.webp"
     ],
     "description": "Luxury youth-preserving sculpting cream enriched with bioactive plant peptides and bakuchiol. Enhances elasticity, smoothens fine lines, and promotes skin firmness.",
     "note": "Peptide and bakuchiol firming complex"
@@ -262,12 +262,12 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Kashmiri Saffron",
-    "image": "/products/saffron-gel/main.png",
-    "hover_image": "/products/saffron-gel/gallery-1.png",
+    "image": "/products/saffron-gel/main.webp",
+    "hover_image": "/products/saffron-gel/gallery-1.webp",
     "gallery": [
-      "/products/saffron-gel/main.png",
-      "/products/saffron-gel/gallery-1.png",
-      "/products/saffron-gel/gallery-2.png"
+      "/products/saffron-gel/main.webp",
+      "/products/saffron-gel/gallery-1.webp",
+      "/products/saffron-gel/gallery-2.webp"
     ],
     "description": "Cooling, water-light therapeutic gel infused with handpicked Kashmiri saffron stigmas and pure organic aloe vera. Calms redness, imparts a luminous glass-skin glow, and hydrates deeply.",
     "note": "Pure Mongra grade saffron extract"
@@ -286,15 +286,15 @@
     "is_featured": true,
     "is_active": true,
     "badge": "Natural Tint",
-    "image": "/products/herbal-lip-balm/main.png",
-    "hover_image": "/products/herbal-lip-balm/gallery-1.png",
+    "image": "/products/herbal-lip-balm/main.webp",
+    "hover_image": "/products/herbal-lip-balm/gallery-1.webp",
     "gallery": [
-      "/products/herbal-lip-balm/main.png",
-      "/products/herbal-lip-balm/gallery-1.png",
-      "/products/herbal-lip-balm/gallery-2.png",
-      "/products/herbal-lip-balm/gallery-3.png",
-      "/products/herbal-lip-balm/gallery-4.png",
-      "/products/herbal-lip-balm/gallery-5.png"
+      "/products/herbal-lip-balm/main.webp",
+      "/products/herbal-lip-balm/gallery-1.webp",
+      "/products/herbal-lip-balm/gallery-2.webp",
+      "/products/herbal-lip-balm/gallery-3.webp",
+      "/products/herbal-lip-balm/gallery-4.webp",
+      "/products/herbal-lip-balm/gallery-5.webp"
     ],
     "description": "Ultra-comforting balm formulated with cold-pressed botanical oils, beeswax, and natural fruit pigments to relieve chapped lips and provide a healthy, soft berry tint.",
     "note": "Chemical-free natural lip softness"

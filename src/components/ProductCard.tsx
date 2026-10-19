@@ -65,6 +65,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           src={product.image}
           alt={product.name}
           loading="lazy"
+          decoding="async"
+          width="400"
+          height="400"
+          onError={(e) => {
+            const target = e.currentTarget;
+            if (target.src.endsWith('.webp')) {
+              target.src = target.src.replace(/\.webp$/, '.png');
+            }
+          }}
           className={`w-full h-full object-contain mix-blend-darken transition-all duration-700 ease-out group-hover:scale-105 drop-shadow-xs ${
             hoverImg ? 'group-hover:opacity-0' : ''
           }`}
@@ -76,6 +85,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             src={hoverImg}
             alt={`${product.name} alternate view`}
             loading="lazy"
+            decoding="async"
+            width="400"
+            height="400"
             className="absolute inset-0 w-full h-full object-contain p-5 mix-blend-darken opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out group-hover:scale-105 drop-shadow-xs"
           />
         )}

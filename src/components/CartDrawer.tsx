@@ -125,7 +125,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                         alt={product.name}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = '/products/amla-powder/main.png';
+                          e.currentTarget.src = '/products/amla-powder/main.webp';
                         }}
                         className="w-full h-full object-contain mix-blend-darken drop-shadow-xs"
                       />

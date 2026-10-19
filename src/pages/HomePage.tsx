@@ -122,35 +122,35 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
       num: '01',
       title: 'Hair Cleanse',
       subtitle: 'Herbal Anti-Dandruff Cleanser',
-      image: '/products/herbal-shampoo/main.png',
+      image: '/products/herbal-shampoo/main.webp',
       category: 'Hair Care',
     },
     {
       num: '02',
       title: 'Inner Vitality',
       subtitle: 'Organic Dehydrated Amla Superfood',
-      image: '/products/amla-powder/main.png',
+      image: '/products/amla-powder/main.webp',
       category: 'Health Care',
     },
     {
       num: '03',
       title: 'Radiance Gel',
       subtitle: 'Kashmiri Saffron & Hyaluronic Elixir',
-      image: '/products/saffron-gel/main.png',
+      image: '/products/saffron-gel/main.webp',
       category: 'Skincare & Creams',
     },
     {
       num: '04',
       title: 'Night Repair',
       subtitle: 'Intense Restorative Night Moisturizer',
-      image: '/products/night-cream/main.png',
+      image: '/products/night-cream/main.webp',
       category: 'Skincare & Creams',
     },
     {
       num: '05',
       title: 'Sun Defense',
       subtitle: 'Mineral Sunscreen Lotion SPF 50',
-      image: '/products/sunscreen/main.png',
+      image: '/products/sunscreen/main.webp',
       category: 'Skincare & Creams',
     },
   ];
@@ -199,12 +199,12 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
           </p>
         </div>
 
-        <div className="gsap-ritual-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 lg:gap-6 w-full max-w-[1440px] mx-auto px-2">
+        <div className="gsap-ritual-grid flex sm:grid sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6 w-full max-w-[1440px] mx-auto px-4 overflow-x-auto sm:overflow-x-visible snap-x snap-mandatory pb-4 sm:pb-0 no-scrollbar">
           {ritualSteps.map((step) => (
             <div
               key={step.num}
               onClick={() => onNavigate('categories', { category: step.category })}
-              className="gsap-ritual-card flex flex-col justify-between bg-[#fcfbf9] hover:bg-white border border-[#e8e2d8] hover:border-[#8b6d43]/50 rounded-2xl md:rounded-3xl p-5 md:p-6 text-center shadow-xs hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer group"
+              className="gsap-ritual-card flex-none w-[78vw] max-w-[280px] sm:w-auto snap-center flex flex-col justify-between bg-[#fcfbf9] hover:bg-white border border-[#e8e2d8] hover:border-[#8b6d43]/50 rounded-2xl md:rounded-3xl p-5 md:p-6 text-center shadow-xs hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer group"
             >
               {/* Step Header */}
               <div className="mb-2">
@@ -224,6 +224,10 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
                 <img
                   src={step.image}
                   alt={step.title}
+                  loading="lazy"
+                  decoding="async"
+                  width="300"
+                  height="375"
                   className="w-full h-full object-contain mix-blend-darken transition-transform duration-700 ease-out group-hover:scale-108 drop-shadow-xs"
                 />
               </div>
@@ -244,6 +248,11 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Mobile Swipe Hint */}
+        <div className="flex sm:hidden items-center justify-center gap-1 mt-4 text-[10px] font-mono tracking-widest uppercase text-[#8b6d43]">
+          <span>Swipe to explore routine &rarr;</span>
         </div>
       </section>
 
@@ -317,6 +326,10 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
                 <img
                   src={video.thumbnail}
                   alt={video.title}
+                  loading="lazy"
+                  decoding="async"
+                  width="320"
+                  height="568"
                   className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">

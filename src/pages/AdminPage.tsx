@@ -114,7 +114,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ subpath = "dashboard", onN
         subtitle: bannerData.subtitle || "",
         ctaText: bannerData.ctaText || "Explore",
         ctaLink: bannerData.ctaLink || "#categories",
-        imageUrl: bannerData.imageUrl || "/img-2.png",
+        imageUrl: bannerData.imageUrl || "/img-2.webp",
         placement: bannerData.placement || "HERO_MAIN",
         active: bannerData.active ?? true,
         displayOrder: banners.length + 1,

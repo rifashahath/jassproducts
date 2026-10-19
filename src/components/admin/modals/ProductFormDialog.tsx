@@ -39,7 +39,7 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
   const [gstRate, setGstRate] = useState<number>(18);
   const [stockQuantity, setStockQuantity] = useState<number>(50);
   const [minStockThreshold, setMinStockThreshold] = useState<number>(15);
-  const [image, setImage] = useState("/products/herbal-shampoo/main.png");
+  const [image, setImage] = useState("/products/herbal-shampoo/main.webp");
   const [volume, setVolume] = useState("250 ML");
   const [swatchCode, setSwatchCode] = useState("334 U");
   const [badge, setBadge] = useState("");
@@ -57,7 +57,7 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setGstRate(product.gstRate || 18);
       setStockQuantity(product.stockQuantity || 50);
       setMinStockThreshold(product.minStockThreshold || 15);
-      setImage(product.image || "/products/herbal-shampoo/main.png");
+      setImage(product.image || "/products/herbal-shampoo/main.webp");
       setVolume(product.volume || "250 ML");
       setSwatchCode(product.swatchCode || "334 U");
       setBadge(product.badge || "");
@@ -73,7 +73,7 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setGstRate(18);
       setStockQuantity(60);
       setMinStockThreshold(15);
-      setImage("/products/herbal-shampoo/main.png");
+      setImage("/products/herbal-shampoo/main.webp");
       setVolume("250 ML");
       setSwatchCode("334 U");
       setBadge("");
@@ -375,7 +375,7 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                   required
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
-                  placeholder="/products/herbal-shampoo/main.png"
+                  placeholder="/products/herbal-shampoo/main.webp"
                   className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
                 />
               </div>
@@ -415,7 +415,7 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                     alt="Preview"
                     className="h-14 w-14 object-cover rounded-lg bg-white border border-[#D2C2AD]/40"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.png";
+                      (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.webp";
                     }}
                   />
                   <div>

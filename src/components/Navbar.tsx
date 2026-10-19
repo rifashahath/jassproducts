@@ -77,14 +77,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
       </nav>
 
       {/* Right Action Icons */}
-      <div id="nav-actions" className="flex items-center gap-3 sm:gap-4 md:gap-5">
+      <div id="nav-actions" className="flex items-center gap-2 sm:gap-4 md:gap-5">
         {/* Track Order Button */}
         <button
           type="button"
           onClick={() => handleNavClick('track-order')}
           aria-label="Track Order"
           id="nav-track-order"
-          className="p-2 rounded-full hover:bg-black/5 text-neutral-800 hover:text-[#8b6d43] transition-colors cursor-pointer"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-full hover:bg-black/5 text-neutral-800 hover:text-[#8b6d43] transition-colors cursor-pointer"
           title="Track Order"
         >
           <Truck className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
           onClick={onOpenAccount}
           aria-label="Account & Sign In"
           id="nav-account"
-          className="p-2 rounded-full hover:bg-black/5 text-neutral-800 hover:text-[#8b6d43] transition-colors cursor-pointer"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-full hover:bg-black/5 text-neutral-800 hover:text-[#8b6d43] transition-colors cursor-pointer"
           title="Account / Sign In"
         >
           <CircleUser className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -107,12 +107,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
           type="button"
           onClick={() => setIsCartOpen(true)}
           aria-label={`Shopping Bag (${totalItemsCount} items)`}
-          className="p-2 rounded-full hover:bg-black/5 text-neutral-800 hover:text-[#8b6d43] transition-colors relative cursor-pointer"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-full hover:bg-black/5 text-neutral-800 hover:text-[#8b6d43] transition-colors relative cursor-pointer"
           title="Shopping Cart"
         >
           <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
           {totalItemsCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 bg-[#8b6d43] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-scale">
+            <span className="absolute top-1 right-1 bg-[#8b6d43] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-scale">
               {totalItemsCount > 99 ? '99+' : totalItemsCount}
             </span>
           )}
@@ -123,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle navigation menu"
-          className="sm:hidden p-2 rounded-full hover:bg-black/5 text-neutral-800 transition-colors cursor-pointer"
+          className="sm:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-full hover:bg-black/5 text-neutral-800 transition-colors cursor-pointer"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>

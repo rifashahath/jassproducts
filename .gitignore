@@ -10,6 +10,7 @@ supabase/.temp/
 .impeccable/
 .agents/
 .codex/
+.opencode/
 skills-lock.json
 
 # impeccable-live-ignore-start

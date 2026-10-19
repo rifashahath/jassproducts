@@ -19,7 +19,7 @@ export const BannerFormModal: React.FC<BannerFormModalProps> = ({
   const [subtitle, setSubtitle] = useState("");
   const [ctaText, setCtaText] = useState("Explore Collection");
   const [ctaLink, setCtaLink] = useState("#categories");
-  const [imageUrl, setImageUrl] = useState("/img-2.png");
+  const [imageUrl, setImageUrl] = useState("/img-2.webp");
   const [placement, setPlacement] = useState<HeroBannerRecord["placement"]>("HERO_MAIN");
   const [active, setActive] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
@@ -38,7 +38,7 @@ export const BannerFormModal: React.FC<BannerFormModalProps> = ({
       setSubtitle("");
       setCtaText("Explore Collection");
       setCtaLink("#categories");
-      setImageUrl("/img-2.png");
+      setImageUrl("/img-2.webp");
       setPlacement("HERO_MAIN");
       setActive(true);
     }
@@ -190,7 +190,7 @@ export const BannerFormModal: React.FC<BannerFormModalProps> = ({
               type="text"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="/img-2.png or /image.png"
+              placeholder="/img-2.webp or /image.webp"
               className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
             />
           </div>
@@ -225,7 +225,7 @@ export const BannerFormModal: React.FC<BannerFormModalProps> = ({
                 alt="Banner preview"
                 className="w-full h-full object-cover opacity-70"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/img-2.png";
+                  (e.target as HTMLImageElement).src = "/img-2.webp";
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-4 flex flex-col justify-end">

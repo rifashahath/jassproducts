@@ -51,16 +51,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       onClick={handleCardClick}
       className={`group relative flex flex-col bg-[#fcfbf9] hover:bg-white border border-[#e8e2d8] hover:border-[#8b6d43]/40 rounded-2xl p-4 sm:p-5 transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_16px_36px_-12px_rgba(75,54,33,0.1)] cursor-pointer text-left ${className}`}
     >
-      {/* Product Image Canvas */}
-      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f5f1ea]/80 mb-4 flex items-center justify-center p-5 group-hover:bg-[#f2ece2] transition-colors duration-500">
+      {/* Product Image Canvas - Pure Studio Presentation without White Box Artifacts */}
+      <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-gradient-to-b from-[#fdfbf9] to-[#f5f0e8] border border-[#e8e2d8]/70 shadow-2xs mb-4 flex items-center justify-center p-6 group-hover:from-[#faf6ef] group-hover:to-[#eee6d8] transition-all duration-500">
         {/* Subtle pill for volume or specialty */}
         {product.volume && (
-          <span className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-md bg-white/80 backdrop-blur-xs text-[10px] font-mono tracking-wider text-neutral-600 border border-neutral-200/60 shadow-2xs">
+          <span className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-xs text-[10px] font-mono tracking-wider text-neutral-600 border border-neutral-200/60 shadow-2xs">
             {product.volume}
           </span>
         )}
 
-        {/* Primary Image */}
+        {/* Primary Image - Clean Alpha Silhouette with Authentic Grounding Shadow */}
         <img
           src={product.image}
           alt={product.name}
@@ -74,7 +74,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               target.src = target.src.replace(/\.webp$/, '.png');
             }
           }}
-          className={`w-full h-full object-contain mix-blend-darken transition-all duration-700 ease-out group-hover:scale-105 drop-shadow-xs ${
+          className={`w-full h-full object-contain filter drop-shadow-[0_10px_18px_rgba(40,30,20,0.13)] transition-all duration-700 ease-out group-hover:scale-106 ${
             hoverImg ? 'group-hover:opacity-0' : ''
           }`}
         />
@@ -88,7 +88,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             decoding="async"
             width="400"
             height="400"
-            className="absolute inset-0 w-full h-full object-contain p-5 mix-blend-darken opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out group-hover:scale-105 drop-shadow-xs"
+            className="absolute inset-0 w-full h-full object-contain p-6 filter drop-shadow-[0_10px_18px_rgba(40,30,20,0.13)] opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out group-hover:scale-106"
           />
         )}
       </div>
@@ -98,11 +98,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <div>
           {/* Category & Badge row */}
           <div className="flex items-center justify-between gap-2 mb-1.5">
-            <span className="text-[10px] font-mono tracking-[0.16em] uppercase text-neutral-400 font-medium truncate">
+            <span className="text-[10px] font-mono tracking-[0.18em] uppercase text-neutral-400 font-medium truncate">
               {product.category}
             </span>
             {product.badge && (
-              <span className="text-[9px] font-medium tracking-wide uppercase px-2 py-0.5 rounded-full bg-[#8b6d43]/10 text-[#8b6d43] whitespace-nowrap">
+              <span className="text-[9px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md bg-[#8b6d43]/10 text-[#8b6d43] border border-[#8b6d43]/20 whitespace-nowrap">
                 {product.badge}
               </span>
             )}
@@ -114,7 +114,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </h3>
         </div>
 
-        {/* Price & Always-Visible Add to Bag Button */}
+        {/* Price & Bespoke Luxury Add to Bag Action */}
         <div className="pt-3 border-t border-[#e8e2d8]/70 flex items-center justify-between gap-2 mt-1">
           <div className="flex items-baseline gap-1.5">
             <span className="font-serif text-xl sm:text-2xl font-semibold text-neutral-900">
@@ -127,15 +127,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             )}
           </div>
 
-          {/* Prominent, Always-Visible Add to Bag Button on all screens */}
+          {/* Bespoke Architectural Add to Bag Button */}
           <button
             type="button"
             onClick={handleQuickAdd}
             aria-label={`Add ${product.name} to bag`}
-            className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 ${
+            className={`px-4 py-2 sm:py-2.5 rounded-xl text-[11px] font-medium tracking-[0.14em] uppercase transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
               isAdded
-                ? 'bg-emerald-800 text-white'
-                : 'bg-[#8b6d43] hover:bg-[#725732] text-white hover:shadow-md'
+                ? 'bg-emerald-900 text-white shadow-xs'
+                : 'bg-neutral-900 hover:bg-black text-white shadow-xs hover:shadow-md'
             }`}
           >
             {isAdded ? (

@@ -111,7 +111,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
                     message: '',
                   });
                 }}
-                className="px-6 py-2.5 rounded-full bg-[#8b6d43] text-white text-xs font-bold uppercase tracking-widest cursor-pointer"
+                className="px-6 py-2.5 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-medium uppercase tracking-[0.14em] cursor-pointer shadow-2xs transition-colors"
               >
                 Send Another Note
               </button>
@@ -196,7 +196,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-full bg-[#8b6d43] hover:bg-[#735835] text-white text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-4 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white text-xs font-semibold tracking-[0.16em] uppercase transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-[0.99]"
               >
                 {loading ? (
                   <span>Transmitting Note...</span>
@@ -288,7 +288,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={() => onNavigate('faq')}
-              className="px-4 py-2 rounded-full bg-white border border-[#d2c2ad] text-neutral-800 text-xs font-bold uppercase tracking-wider hover:bg-[#8b6d43] hover:text-white transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-white border border-[#d2c2ad] text-neutral-900 text-xs font-semibold uppercase tracking-[0.12em] hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-colors cursor-pointer shadow-2xs"
             >
               View FAQ
             </button>

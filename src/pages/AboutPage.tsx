@@ -203,7 +203,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate('categories')}
-            className="px-8 py-3.5 rounded-full bg-[#8b6d43] hover:bg-[#a68252] text-white text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 shadow-lg cursor-pointer flex items-center gap-2"
+            className="px-8 py-3.5 rounded-xl bg-white hover:bg-neutral-100 text-neutral-950 text-xs font-semibold tracking-[0.16em] uppercase transition-all duration-300 shadow-sm cursor-pointer inline-flex items-center gap-2.5"
           >
             <span>Explore The Remedies</span>
             <ArrowRight className="w-4 h-4" />

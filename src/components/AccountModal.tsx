@@ -166,9 +166,9 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose, onN
                   <form onSubmit={handleReset} className="space-y-4">
                     <div>
                       <label htmlFor="am-email-r" className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1">Email</label>
-                      <input id="am-email-r" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-[#8b6d43] text-sm" />
+                      <input id="am-email-r" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-neutral-900 text-sm" />
                     </div>
-                    <button type="submit" disabled={authBusy} className="w-full py-3 rounded-full bg-[#8b6d43] hover:bg-[#735835] text-white text-xs font-bold tracking-widest uppercase cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2">
+                    <button type="submit" disabled={authBusy} className="w-full py-3.5 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white text-xs font-semibold tracking-[0.14em] uppercase cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 transition-colors shadow-2xs">
                       {authBusy && <Loader2 className="w-4 h-4 animate-spin" />}Send reset link
                     </button>
                   </form>
@@ -177,19 +177,19 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose, onN
                     {mode === 'signup' && (
                       <div>
                         <label htmlFor="am-name" className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1">Full name</label>
-                        <input id="am-name" type="text" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-[#8b6d43] text-sm" />
+                        <input id="am-name" type="text" required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-neutral-900 text-sm" />
                       </div>
                     )}
                     <div>
                       <label htmlFor="am-email" className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1">Email</label>
-                      <input id="am-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-[#8b6d43] text-sm" />
+                      <input id="am-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-neutral-900 text-sm" />
                     </div>
                     <div>
                       <label htmlFor="am-pass" className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1">Password</label>
-                      <input id="am-pass" type="password" required autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-[#8b6d43] text-sm" />
+                      <input id="am-pass" type="password" required autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-neutral-900 text-sm" />
                       {mode === 'signup' && <p className="text-[10px] text-neutral-500 mt-1">Minimum 8 characters.</p>}
                     </div>
-                    <button type="submit" disabled={authBusy} className="w-full py-3 rounded-full bg-[#8b6d43] hover:bg-[#735835] text-white text-xs font-bold tracking-widest uppercase cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2">
+                    <button type="submit" disabled={authBusy} className="w-full py-3.5 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white text-xs font-semibold tracking-[0.14em] uppercase cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 transition-colors shadow-2xs">
                       {authBusy && <Loader2 className="w-4 h-4 animate-spin" />}
                       {mode === 'signin' ? 'Sign In' : 'Create Account'}
                     </button>

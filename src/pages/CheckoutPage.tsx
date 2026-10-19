@@ -324,14 +324,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate(`track-order?id=${orderComplete.orderId}`)}
-            className="px-8 py-3.5 rounded-full bg-[#8b6d43] hover:bg-[#735835] text-white text-xs font-bold tracking-widest uppercase transition-all shadow-md cursor-pointer"
+            className="px-8 py-3.5 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-medium tracking-[0.14em] uppercase transition-all shadow-sm cursor-pointer"
           >
             Track This Order
           </button>
           <button
             type="button"
             onClick={() => onNavigate('home')}
-            className="px-8 py-3.5 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-bold tracking-widest uppercase transition-all cursor-pointer"
+            className="px-8 py-3.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-medium tracking-[0.14em] uppercase transition-all cursor-pointer"
           >
             Return to Homepage
           </button>
@@ -351,7 +351,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
         <button
           type="button"
           onClick={() => onNavigate('categories')}
-          className="px-6 py-3 rounded-full bg-[#8b6d43] text-white text-xs font-bold uppercase tracking-widest cursor-pointer"
+          className="px-6 py-3 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-medium tracking-[0.14em] uppercase transition-colors cursor-pointer shadow-sm"
         >
           Explore Apothecary
         </button>
@@ -559,11 +559,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
               {items.map(({ product, quantity }) => (
                 <div key={String(product.id)} className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-xl bg-white border border-[#d2c2ad]/40 p-1 flex-shrink-0 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-b from-[#fdfbf9] to-[#f5f0e8] border border-[#e8e2d8]/70 p-1 flex-shrink-0 flex items-center justify-center shadow-2xs">
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-contain mix-blend-darken"
+                      className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(40,30,20,0.1)]"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -614,7 +614,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
               </div>
               <div className="flex justify-between text-base font-bold text-neutral-900 pt-3 border-t border-neutral-300">
                 <span>Total Due</span>
-                <span className="text-[#8b6d43] font-serif text-xl">
+                <span className="text-neutral-900 font-serif text-xl font-bold">
                   {formatINR(total)}
                 </span>
               </div>
@@ -624,7 +624,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
             <button
               type="submit"
               disabled={isProcessing || pricingLoading || total <= 0}
-              className="w-full py-4 rounded-full bg-gradient-to-r from-[#8b6d43] to-[#a68252] hover:from-[#a68252] hover:to-[#8b6d43] text-white text-xs font-bold tracking-[0.2em] uppercase shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full py-4 rounded-xl bg-neutral-950 hover:bg-neutral-900 text-white text-xs font-semibold tracking-[0.16em] uppercase shadow-md transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-[0.99]"
             >
               <Lock className="w-4 h-4" />
               <span>

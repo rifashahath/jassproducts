@@ -241,8 +241,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
           
           {/* Gallery Showcase (Left Column - 6 cols) */}
           <div className="pdp-gallery lg:col-span-6 flex flex-col">
-            {/* Main Stage */}
-            <div className="aspect-square w-full rounded-2xl bg-[#f5f1ea]/80 border border-[#e8e2d8]/80 p-8 sm:p-14 flex items-center justify-center relative overflow-hidden group">
+            {/* Main Stage - Pure Studio Presentation without White Box Artifacts */}
+            <div className="aspect-square w-full rounded-3xl bg-gradient-to-b from-[#fdfbf9] to-[#f5f0e8] border border-[#e8e2d8]/80 p-8 sm:p-14 flex items-center justify-center relative overflow-hidden group shadow-xs">
               <img
                 src={selectedImage}
                 alt={product.name}
@@ -256,10 +256,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                     target.src = target.src.replace(/\.webp$/, '.png');
                   }
                 }}
-                className="w-full h-full object-contain mix-blend-darken transition-transform duration-700 ease-out group-hover:scale-105 drop-shadow-md"
+                className="w-full h-full object-contain filter drop-shadow-[0_20px_32px_rgba(40,30,20,0.15)] transition-transform duration-700 ease-out group-hover:scale-105"
               />
               {product.volume && (
-                <span className="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-xs text-[11px] font-mono tracking-wider text-neutral-700 border border-neutral-200 shadow-2xs">
+                <span className="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-xs text-[11px] font-mono tracking-wider text-neutral-700 border border-neutral-200/80 shadow-2xs">
                   {product.volume}
                 </span>
               )}
@@ -273,9 +273,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                     key={i}
                     type="button"
                     onClick={() => setSelectedImage(img)}
-                    className={`w-18 h-18 sm:w-20 sm:h-20 rounded-xl bg-[#f5f1ea]/80 p-2 border transition-all duration-200 flex-shrink-0 cursor-pointer ${
+                    className={`w-18 h-18 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-b from-[#fdfbf9] to-[#f5f0e8] p-2 border transition-all duration-200 flex-shrink-0 cursor-pointer ${
                       selectedImage === img
-                        ? 'border-[#8b6d43] ring-2 ring-[#8b6d43]/30 shadow-xs'
+                        ? 'border-neutral-900 ring-2 ring-neutral-900/20 shadow-xs'
                         : 'border-[#e8e2d8] hover:border-neutral-400 opacity-80 hover:opacity-100'
                     }`}
                   >
@@ -286,7 +286,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                       decoding="async"
                       width="80"
                       height="80"
-                      className="w-full h-full object-contain mix-blend-darken"
+                      className="w-full h-full object-contain filter drop-shadow-xs"
                     />
                   </button>
                 ))}
@@ -302,7 +302,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                 {product.category}
               </span>
               {product.badge && (
-                <span className="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#8b6d43]/10 text-[#8b6d43] font-medium">
+                <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#8b6d43]/10 text-[#8b6d43] border border-[#8b6d43]/20 font-medium">
                   {product.badge}
                 </span>
               )}
@@ -352,18 +352,18 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
               {product.description}
             </p>
 
-            {/* Quantity Stepper & Unified Add to Bag CTA */}
+            {/* Quantity Stepper & Bespoke Add to Bag CTA */}
             <div className="space-y-3 mb-8">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 {/* Stepper */}
-                <div className="inline-flex items-center justify-between border border-neutral-300 rounded-full bg-white h-12 px-3 gap-3 self-start sm:self-auto min-w-[120px]">
+                <div className="inline-flex items-center justify-between border border-neutral-300/80 rounded-xl bg-white h-13 px-3 gap-3 self-start sm:self-auto min-w-[125px] shadow-2xs">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     aria-label="Decrease quantity"
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
                   >
-                    <Minus className="w-3 h-3" />
+                    <Minus className="w-3.5 h-3.5" />
                   </button>
                   <span className="font-mono text-sm font-semibold text-neutral-900 select-none">
                     {quantity}
@@ -372,9 +372,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
                     aria-label="Increase quantity"
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
@@ -382,23 +382,26 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className={`flex-1 h-12 px-8 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md cursor-pointer active:scale-[0.98] ${
+                  className={`flex-1 h-13 px-8 rounded-xl text-xs font-semibold uppercase tracking-[0.16em] transition-all duration-300 flex items-center justify-between shadow-sm hover:shadow-md cursor-pointer active:scale-[0.99] ${
                     addedToCart
-                      ? 'bg-emerald-800 text-white'
-                      : 'bg-[#8b6d43] hover:bg-[#725732] text-white'
+                      ? 'bg-emerald-900 text-white'
+                      : 'bg-neutral-950 hover:bg-neutral-900 text-white'
                   }`}
                 >
                   {addedToCart ? (
-                    <>
+                    <div className="w-full flex items-center justify-center gap-2">
                       <Check className="w-4 h-4 stroke-[2.5]" />
                       <span>Added to Bag</span>
-                    </>
+                    </div>
                   ) : (
                     <>
-                      <ShoppingBag className="w-4 h-4" />
-                      <span>Add to Bag</span>
-                      <span className="opacity-60">·</span>
-                      <span className="font-mono">₹{(p.price * quantity).toLocaleString('en-IN')}</span>
+                      <div className="flex items-center gap-2.5">
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>Add to Bag</span>
+                      </div>
+                      <span className="font-mono text-sm font-semibold tracking-normal text-white/90">
+                        ₹{(p.price * quantity).toLocaleString('en-IN')}
+                      </span>
                     </>
                   )}
                 </button>
@@ -406,23 +409,23 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
             </div>
 
             {/* Delivery Estimator */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#f7f5ef]/80 border border-[#e8e2d8] space-y-3 mb-6">
-              <span className="text-[11px] font-mono uppercase tracking-[0.16em] text-neutral-700 font-semibold flex items-center gap-1.5">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#fcfbf9] border border-[#e8e2d8] space-y-3 mb-6 shadow-2xs">
+              <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-neutral-700 font-semibold flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#8b6d43]" />
                 Estimate Delivery Time
               </span>
-              <form onSubmit={handlePinCheck} className="flex gap-2">
+              <form onSubmit={handlePinCheck} className="flex items-center gap-2">
                 <input
                   type="text"
                   maxLength={6}
                   value={pin}
                   onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
                   placeholder="Enter 6-digit PIN code"
-                  className="flex-1 h-10 px-4 rounded-full border border-neutral-300 bg-white text-xs font-mono text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#8b6d43]"
+                  className="flex-1 h-11 px-4 rounded-xl border border-neutral-300 bg-white text-xs font-mono text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors shadow-2xs"
                 />
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-full bg-neutral-900 hover:bg-black text-white text-xs font-semibold uppercase tracking-wider cursor-pointer transition-colors"
+                  className="h-11 px-6 rounded-xl bg-neutral-900 hover:bg-black text-white text-[11px] font-semibold uppercase tracking-[0.14em] cursor-pointer transition-colors shadow-2xs active:scale-95"
                 >
                   Check
                 </button>
@@ -678,7 +681,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
             <button
               type="button"
               onClick={() => setWriteOpen(!writeOpen)}
-              className="text-xs px-4 py-2 rounded-full bg-[#8b6d43] hover:bg-[#725732] text-white font-semibold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
+              className="text-xs px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white font-medium tracking-[0.14em] uppercase transition-colors cursor-pointer shadow-2xs"
             >
               Write Review
             </button>
@@ -710,7 +713,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                       value={rForm.author}
                       onChange={(e) => setRForm({ ...rForm, author: e.target.value })}
                       placeholder="Ananya S."
-                      className="w-full h-10 px-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-[#8b6d43]"
+                      className="w-full h-10 px-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-neutral-900"
                     />
                   </div>
                   <div>
@@ -719,7 +722,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                       value={rForm.location}
                       onChange={(e) => setRForm({ ...rForm, location: e.target.value })}
                       placeholder="Mumbai"
-                      className="w-full h-10 px-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-[#8b6d43]"
+                      className="w-full h-10 px-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-neutral-900"
                     />
                   </div>
                 </div>
@@ -734,7 +737,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                         onClick={() => setRForm({ ...rForm, rating: s })}
                         className="cursor-pointer"
                       >
-                        <Star className={`w-5 h-5 ${s <= rForm.rating ? 'fill-[#8b6d43] text-[#8b6d43]' : 'text-neutral-300'}`} />
+                        <Star className={`w-5 h-5 ${s <= rForm.rating ? 'fill-amber-500 text-amber-500' : 'text-neutral-300'}`} />
                       </button>
                     ))}
                   </div>
@@ -747,7 +750,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                     value={rForm.title}
                     onChange={(e) => setRForm({ ...rForm, title: e.target.value })}
                     placeholder="Summary of your ritual result"
-                    className="w-full h-10 px-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-[#8b6d43]"
+                    className="w-full h-10 px-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-neutral-900"
                   />
                 </div>
 
@@ -759,13 +762,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
                     value={rForm.content}
                     onChange={(e) => setRForm({ ...rForm, content: e.target.value })}
                     placeholder="Describe aroma, texture, and physical results."
-                    className="w-full p-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-[#8b6d43] resize-none"
+                    className="w-full p-3 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-neutral-900 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-full bg-[#8b6d43] hover:bg-[#725732] text-white text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
+                  className="px-6 py-2.5 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-medium tracking-[0.14em] uppercase transition-colors cursor-pointer shadow-2xs"
                 >
                   Submit Feedback
                 </button>

@@ -199,11 +199,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="Your email address"
-                  className="bg-[#201d1b] border border-[#3a3530] rounded-lg px-3.5 py-2 text-xs text-[#f9f8f4] placeholder:text-[#ebe3d5]/40 outline-none focus:border-[#8b6d43]"
+                  className="bg-[#201d1b] border border-[#3a3530] rounded-lg px-3.5 py-2 text-xs text-[#f9f8f4] placeholder:text-[#ebe3d5]/40 outline-none focus:border-[#ebe3d5]"
                 />
                 <button
                   type="submit"
-                  className="w-full py-2 bg-[#8b6d43] hover:bg-[#9e7c4d] text-white text-[11px] font-bold uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
+                  className="w-full py-2.5 bg-[#f9f8f4] hover:bg-white text-neutral-950 text-[11px] font-semibold uppercase tracking-[0.14em] rounded-lg transition-colors cursor-pointer shadow-xs"
                 >
                   Subscribe
                 </button>

@@ -204,14 +204,14 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
             <div
               key={step.num}
               onClick={() => onNavigate('categories', { category: step.category })}
-              className="gsap-ritual-card flex-none w-[78vw] max-w-[280px] sm:w-auto snap-center flex flex-col justify-between bg-[#fcfbf9] hover:bg-white border border-[#e8e2d8] hover:border-[#8b6d43]/50 rounded-2xl md:rounded-3xl p-5 md:p-6 text-center shadow-xs hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer group"
+              className="gsap-ritual-card flex-none w-[78vw] max-w-[280px] sm:w-auto snap-center flex flex-col justify-between bg-[#fcfbf9] hover:bg-white border border-[#e8e2d8] hover:border-neutral-400 rounded-2xl md:rounded-3xl p-5 md:p-6 text-center shadow-xs hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 cursor-pointer group"
             >
               {/* Step Header */}
               <div className="mb-2">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#8b6d43]/10 text-[#8b6d43] text-[10px] font-mono tracking-widest uppercase font-semibold mb-2">
+                <span className="inline-block px-2.5 py-0.5 rounded-md bg-neutral-900/5 text-neutral-700 border border-neutral-300/60 text-[10px] font-mono tracking-widest uppercase font-semibold mb-2">
                   Step {step.num}
                 </span>
-                <h3 className="text-neutral-900 group-hover:text-[#8b6d43] transition-colors text-lg sm:text-xl font-serif font-medium tracking-wide mb-1">
+                <h3 className="text-neutral-900 group-hover:text-black transition-colors text-lg sm:text-xl font-serif font-medium tracking-wide mb-1">
                   {step.title}
                 </h3>
                 <p className="text-neutral-500 text-xs font-light leading-snug line-clamp-1">
@@ -220,7 +220,7 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
               </div>
 
               {/* Product Image Canvas - Perfectly Centered, Proportional, and Elegant */}
-              <div className="w-full aspect-[4/5] rounded-xl overflow-hidden bg-[#f5f1ea]/80 my-3 relative flex items-center justify-center p-5 group-hover:bg-[#f2ece2] transition-colors duration-500">
+              <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-b from-[#fdfbf9] to-[#f5f0e8] border border-[#e8e2d8]/70 shadow-2xs my-3 relative flex items-center justify-center p-5 group-hover:from-[#faf6ef] group-hover:to-[#eee6d8] transition-all duration-500">
                 <img
                   src={step.image}
                   alt={step.title}
@@ -228,7 +228,7 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
                   decoding="async"
                   width="300"
                   height="375"
-                  className="w-full h-full object-contain mix-blend-darken transition-transform duration-700 ease-out group-hover:scale-108 drop-shadow-xs"
+                  className="w-full h-full object-contain filter drop-shadow-[0_10px_16px_rgba(40,30,20,0.13)] transition-transform duration-700 ease-out group-hover:scale-108"
                 />
               </div>
 
@@ -240,7 +240,7 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
                     e.stopPropagation();
                     onNavigate('categories', { category: step.category });
                   }}
-                  className="w-full py-2.5 rounded-full border border-neutral-300 group-hover:border-[#8b6d43] text-neutral-800 group-hover:bg-[#8b6d43] group-hover:text-white text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
+                  className="w-full py-2.5 rounded-xl border border-neutral-300 group-hover:border-neutral-900 text-neutral-800 group-hover:bg-neutral-900 group-hover:text-white text-[11px] sm:text-xs font-medium uppercase tracking-[0.14em] transition-all duration-300 flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
                 >
                   <span>Explore Step</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -286,10 +286,12 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate('categories')}
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white text-xs font-semibold tracking-[0.18em] uppercase transition-all duration-300 cursor-pointer shadow-2xs hover:shadow-md"
+            className="inline-flex items-center gap-3 pl-7 pr-2.5 py-2.5 rounded-full bg-neutral-950 text-white hover:bg-neutral-800 text-xs font-semibold tracking-[0.18em] uppercase transition-all duration-300 cursor-pointer shadow-xs hover:shadow-lg group"
           >
             <span>Explore All Formulations</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span className="w-8 h-8 rounded-full bg-white/10 group-hover:bg-white/20 flex items-center justify-center transition-colors">
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </span>
           </button>
         </div>
       </section>
@@ -298,7 +300,7 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
       <section className="gsap-video-section w-full py-16 md:py-24 bg-[#FAF9F6]">
         <div className="gsap-video-header max-w-[1400px] mx-auto px-6 sm:px-10 md:px-14 mb-8 md:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h2 className="text-3xl md:text-4xl text-[#8b6d43] font-serif uppercase tracking-wider mb-2">
+            <h2 className="text-3xl md:text-4xl text-neutral-900 font-serif uppercase tracking-wider mb-2">
               The Ritual In Action
             </h2>
             <p className="text-xs md:text-sm text-neutral-600 uppercase tracking-widest">
@@ -309,7 +311,7 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
             href="https://www.youtube.com/@jassayurveda"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.15em] uppercase text-[#8b6d43] border border-[#8b6d43] px-5 py-2.5 rounded-full hover:bg-[#8b6d43] hover:text-white transition-colors duration-300 self-start md:self-auto cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] uppercase text-neutral-900 border border-neutral-300 bg-white/90 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 px-5 py-2.5 rounded-xl transition-all duration-300 self-start md:self-auto cursor-pointer shadow-2xs"
           >
             <Play className="w-3.5 h-3.5" fill="currentColor" />
             Watch on YouTube

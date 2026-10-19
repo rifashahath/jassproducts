@@ -181,7 +181,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
         <button
           type="button"
           onClick={() => onNavigate('contact')}
-          className="px-6 py-3 rounded-full bg-[#8b6d43] hover:bg-[#735835] text-white text-xs font-bold tracking-widest uppercase transition-all shadow-sm cursor-pointer whitespace-nowrap"
+          className="px-6 py-3 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-semibold tracking-[0.14em] uppercase transition-all shadow-2xs cursor-pointer whitespace-nowrap"
         >
           Contact Herbalist
         </button>

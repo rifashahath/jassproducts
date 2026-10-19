@@ -106,7 +106,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                     setIsCartOpen(false);
                     onNavigate('categories');
                   }}
-                  className="px-6 py-2.5 rounded-full bg-[#8b6d43] hover:bg-[#725732] text-white text-xs font-semibold tracking-wider uppercase transition-colors cursor-pointer shadow-xs"
+                  className="px-6 py-2.5 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-medium tracking-[0.14em] uppercase transition-colors cursor-pointer shadow-2xs"
                 >
                   Explore Collection
                 </button>
@@ -119,7 +119,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                 >
                   {/* Product Image & Title */}
                   <div className="col-span-6 sm:col-span-5 flex items-center gap-3 sm:gap-4 min-w-0">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-[#f5f1ea]/80 p-2 flex items-center justify-center flex-shrink-0 border border-neutral-100">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-b from-[#fdfbf9] to-[#f5f0e8] p-1.5 flex items-center justify-center flex-shrink-0 border border-[#e8e2d8]/70 shadow-2xs">
                       <img
                         src={product.image}
                         alt={product.name}
@@ -127,7 +127,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = '/products/amla-powder/main.webp';
                         }}
-                        className="w-full h-full object-contain mix-blend-darken drop-shadow-xs"
+                        className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(40,30,20,0.1)]"
                       />
                     </div>
                     <div className="min-w-0 pr-1">
@@ -260,10 +260,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigate }) => {
               type="button"
               disabled={items.length === 0 || pricingLoading || total <= 0}
               onClick={handleCheckout}
-              className={`w-full py-4 rounded-xl text-white text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-md hover:shadow-lg text-center cursor-pointer ${
+              className={`w-full py-4 rounded-xl text-white text-xs font-semibold tracking-[0.16em] uppercase transition-all shadow-sm hover:shadow-md text-center cursor-pointer ${
                 items.length === 0 || pricingLoading || total <= 0
                   ? 'bg-neutral-300 cursor-not-allowed'
-                  : 'bg-[#8b6d43] hover:bg-[#725732] active:scale-[0.99]'
+                  : 'bg-neutral-950 hover:bg-neutral-900 active:scale-[0.99]'
               }`}
             >
               {pricingLoading ? 'Updating prices...' : 'Proceed to Checkout'}

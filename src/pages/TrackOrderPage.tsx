@@ -133,7 +133,7 @@ export const TrackOrderPage: React.FC<TrackOrderPageProps> = ({ initialOrderId, 
             e.preventDefault();
             void handleSearch(orderIdInput);
           }}
-          className="flex max-w-md mx-auto bg-white rounded-full border border-[#d2c2ad] p-1.5 shadow-sm focus-within:border-[#8b6d43]"
+          className="flex max-w-md mx-auto bg-white rounded-xl border border-neutral-300 p-1.5 shadow-2xs focus-within:border-neutral-900 transition-colors"
         >
           <input
             type="text"
@@ -146,7 +146,7 @@ export const TrackOrderPage: React.FC<TrackOrderPageProps> = ({ initialOrderId, 
           <button
             type="submit"
             disabled={searching}
-            className="px-6 py-2.5 rounded-full bg-[#8b6d43] hover:bg-[#735835] text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-60"
+            className="px-6 py-2.5 rounded-lg bg-neutral-900 hover:bg-black text-white text-xs font-medium uppercase tracking-[0.14em] transition-colors cursor-pointer disabled:opacity-60 shadow-2xs"
           >
             {searching ? '…' : 'Track'}
           </button>

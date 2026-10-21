@@ -52,18 +52,27 @@ export const PrintableOrderModal: React.FC<PrintableOrderModalProps> = ({
         <div className="space-y-6">
           {/* Header Masthead */}
           <div className="flex justify-between items-start border-b border-neutral-200 pb-6">
-            <div>
-              <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
-                JASS AYURVEDA
-              </h1>
-              <p className="text-xs text-neutral-500 font-mono mt-0.5">
-                Authentic Botanical Formulations & Dispensary
-              </p>
-              <p className="text-xs text-neutral-600 mt-2">
-                Nilgiris Distillery & Extraction Lab<br />
-                Karnataka & Tamil Nadu, India<br />
-                GSTIN: 29AABCJ1984K1Z4
-              </p>
+            <div className="flex items-start gap-4">
+              <img
+                src="/logo.png"
+                alt="Jass Products"
+                className="w-14 h-14 rounded-full object-contain border border-[#8B6D43]/30 shrink-0"
+                width={56}
+                height={56}
+              />
+              <div>
+                <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
+                  JASS AYURVEDA
+                </h1>
+                <p className="text-xs text-neutral-500 font-mono mt-0.5">
+                  Authentic Botanical Formulations & Dispensary
+                </p>
+                <p className="text-xs text-neutral-600 mt-2">
+                  Nilgiris Distillery & Extraction Lab<br />
+                  Karnataka & Tamil Nadu, India<br />
+                  GSTIN: 29AABCJ1984K1Z4
+                </p>
+              </div>
             </div>
             <div className="text-right">
               <span className="inline-block bg-[#F4EFE6] text-[#8B6D43] font-mono text-xs font-bold px-3 py-1 rounded-md mb-2">

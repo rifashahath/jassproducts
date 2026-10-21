@@ -57,7 +57,14 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
     <div ref={aboutRef} className="w-full flex flex-col items-center px-4 sm:px-6 md:px-12 py-8 max-w-[1400px] mx-auto">
       {/* Hero Header */}
       <div className="gsap-about-hero w-full text-center py-12 md:py-16 bg-gradient-to-b from-[#f4f1ea] via-[#FAF9F6] to-[#ebe3d5]/50 rounded-[2.5rem] border border-[#d2c2ad]/40 mb-14 px-6 relative overflow-hidden">
-        <div className="max-w-3xl mx-auto z-10 relative">
+        <div className="max-w-3xl mx-auto z-10 relative flex flex-col items-center">
+          <img
+            src="/logo.png"
+            alt="Jass Products Emblem"
+            className="w-20 h-20 md:w-24 md:h-24 rounded-full object-contain mb-5 drop-shadow-md border border-[#8b6d43]/20"
+            width={96}
+            height={96}
+          />
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#8b6d43]/10 border border-[#8b6d43]/20 mb-4 text-xs font-bold tracking-[0.25em] text-[#8b6d43] uppercase">
             <Sparkles className="w-3.5 h-3.5" />
             <span>The Jass Heritage</span>

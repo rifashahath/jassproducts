@@ -166,9 +166,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           onClick={() => handleLinkClick("#admin")}
           className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="h-9 w-9 rounded-xl bg-[#8B6D43] text-white flex items-center justify-center font-serif text-base font-bold shadow-xs">
-            J
-          </div>
+          <img
+            src="/logo.png"
+            alt="Jass Products Logo"
+            className="h-9 w-9 rounded-full object-contain shadow-xs border border-[#8B6D43]/30 shrink-0 group-hover:scale-105 transition-transform"
+            width={36}
+            height={36}
+          />
           {!collapsed && (
             <div>
               <span className="font-serif font-bold text-sm tracking-wide text-[#2D2A26] block leading-tight">

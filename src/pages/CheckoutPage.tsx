@@ -42,6 +42,7 @@ interface RazorpayOptions {
   currency: string;
   name: string;
   description: string;
+  image?: string;
   order_id: string;
   prefill: { name: string; email: string; contact: string };
   theme: { color: string };
@@ -245,6 +246,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
         currency: data.currency || 'INR',
         name: 'Jass Products',
         description: 'Ayurvedic order payment',
+        image: 'https://jassproducts.in/logo.png',
         order_id: data.razorpayOrderId,
         prefill: {
           name: `${formData.firstName} ${formData.lastName}`.trim(),

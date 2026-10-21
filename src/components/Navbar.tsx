@@ -38,10 +38,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
           onClick={() => handleNavClick('home')}
           id="brand-logo-link"
           aria-label="Jass Products Home"
-          className="flex items-baseline gap-1.5 transition-transform hover:opacity-85 active:scale-95 cursor-pointer bg-transparent border-0 p-0 text-left"
+          className="flex items-center gap-2.5 sm:gap-3 transition-transform hover:opacity-90 active:scale-95 cursor-pointer bg-transparent border-0 p-0 text-left group"
         >
-          <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider text-neutral-900">JASS</span>
-          <span className="text-[10px] md:text-[11px] tracking-[0.25em] font-semibold text-[#8b6d43] uppercase">Products</span>
+          <img
+            src="/logo.png"
+            alt="Jass Products Logo"
+            className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full object-contain shrink-0 drop-shadow-xs transition-transform group-hover:scale-105"
+            width={44}
+            height={44}
+            loading="eager"
+          />
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider text-neutral-900">JASS</span>
+            <span className="text-[10px] md:text-[11px] tracking-[0.25em] font-semibold text-[#8b6d43] uppercase">Products</span>
+          </div>
         </button>
       </div>
 

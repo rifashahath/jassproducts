@@ -139,9 +139,13 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose, onN
         <div className="relative w-full max-w-md bg-[#FAF9F6] rounded-[2rem] shadow-2xl overflow-hidden z-10 border border-[#d2c2ad]/60 animate-in zoom-in-95 duration-200">
           <div className="p-6 bg-[#f4f1ea] border-b border-[#d2c2ad]/40 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#8b6d43]/15 text-[#8b6d43] flex items-center justify-center">
-                <CircleUser className="w-6 h-6" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="Jass Products"
+                className="w-10 h-10 rounded-full object-contain border border-[#8b6d43]/30 shadow-xs shrink-0"
+                width={40}
+                height={40}
+              />
               <h3 className="font-serif text-xl font-bold text-neutral-900">
                 {mode === 'signin' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Reset Password'}
               </h3>

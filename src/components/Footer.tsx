@@ -54,13 +54,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       <div className="max-w-[1400px] mx-auto">
         {/* Giant Masthead */}
         <div className="pb-12 border-b border-[#2e2a26] mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#8b6d43] font-semibold block mb-2">
-              Authentic Botanical Dispensary
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#f9f8f4] tracking-tight">
-              JASS AYURVEDA
-            </h2>
+          <div className="flex items-center gap-4 sm:gap-5">
+            <img
+              src="/logo.png"
+              alt="Jass Products Logo"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-contain shrink-0 drop-shadow-md border border-[#8b6d43]/30"
+              width={64}
+              height={64}
+              loading="lazy"
+            />
+            <div>
+              <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#8b6d43] font-semibold block mb-2">
+                Authentic Botanical Dispensary
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#f9f8f4] tracking-tight">
+                JASS AYURVEDA
+              </h2>
+            </div>
           </div>
           <div className="max-w-xs text-xs text-[#ebe3d5]/60 leading-relaxed uppercase tracking-wider">
             Crafted in Karnataka & Tamil Nadu for Indian hair and scalp resilience against borewell hard water.

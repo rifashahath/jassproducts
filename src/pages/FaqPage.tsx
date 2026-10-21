@@ -83,7 +83,7 @@ export const FaqPage: React.FC<FaqPageProps> = ({ onNavigate }) => {
 
   const categories = [
     { id: 'shipping', label: 'Shipping & Delivery', icon: Truck },
-    { id: 'products', label: 'Ayurveda & Products', icon: Sparkles },
+    { id: 'products', label: 'Our Products', icon: Sparkles },
     { id: 'returns', label: 'Returns & Guarantee', icon: RefreshCw },
     { id: 'payments', label: 'Payment & Security', icon: ShieldCheck },
   ];

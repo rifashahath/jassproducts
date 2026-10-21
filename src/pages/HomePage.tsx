@@ -308,7 +308,7 @@ export const HomePage: React.FC<HomePageProps> = ({ scrollY, onNavigate }) => {
             </p>
           </div>
           <a
-            href="https://www.youtube.com/@jassayurveda"
+            href="https://www.youtube.com/@jassproducts"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] uppercase text-neutral-900 border border-neutral-300 bg-white/90 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 px-5 py-2.5 rounded-xl transition-all duration-300 self-start md:self-auto cursor-pointer shadow-2xs"

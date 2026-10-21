@@ -33,7 +33,7 @@ Daily hair, bath, and skin rituals in Indian households. Customers evaluate form
 
 ## Brand Commitments
 
-- **Name:** Jass Products / Jass Ayurveda.
+- **Name:** Jass Products.
 - **Voice:** Grounded, honest, editorial, and educational; strictly rejects AI marketing buzzwords ("miracle", "game-changer", "unleash", "elevate") and artificial urgency countdowns.
 - **Botanical Integrity:** Full ingredient disclosure with Latin binomials on packaging and digital pages.
 

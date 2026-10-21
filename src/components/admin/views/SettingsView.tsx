@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Settings, Save, Check, ShieldCheck, Mail, MapPin, Building2 } from "lucide-react";
 
 export const SettingsView: React.FC = () => {
-  const [storeName, setStoreName] = useState("JASS AYURVEDA");
+  const [storeName, setStoreName] = useState("JASS PRODUCTS");
   const [currency, setCurrency] = useState("INR (₹)");
   const [gstin, setGstin] = useState("29AABCJ1984K1Z4");
   const [supportEmail, setSupportEmail] = useState("apothecary@jassproducts.com");

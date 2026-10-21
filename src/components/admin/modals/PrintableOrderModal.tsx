@@ -62,7 +62,7 @@ export const PrintableOrderModal: React.FC<PrintableOrderModalProps> = ({
               />
               <div>
                 <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
-                  JASS AYURVEDA
+                  JASS PRODUCTS
                 </h1>
                 <p className="text-xs text-neutral-500 font-mono mt-0.5">
                   Authentic Botanical Formulations & Dispensary

@@ -94,7 +94,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </div>
           <div className="absolute -bottom-6 -right-4 sm:right-6 bg-white p-5 rounded-2xl border border-[#d2c2ad]/60 shadow-xl max-w-xs">
             <p className="font-serif text-sm font-bold text-neutral-900 mb-1">
-              "Ayurveda is the art of living in harmony with nature's rhythm."
+              "Pure botanicals in harmony with nature's rhythm."
             </p>
             <span className="text-[10px] uppercase tracking-widest text-[#8b6d43] font-semibold">
               Jass Botanical Apothecary

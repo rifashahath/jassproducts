@@ -68,7 +68,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 Authentic Botanical Dispensary
               </span>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#f9f8f4] tracking-tight">
-                JASS AYURVEDA
+                JASS PRODUCTS
               </h2>
             </div>
           </div>

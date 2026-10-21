@@ -277,7 +277,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
         searchPlaceholder="Search by name, SKU, or active herbs..."
         searchField={(p) => `${p.name} ${p.sku} ${p.category}`}
         onRowClick={(p) => onEditProduct(p)}
-        exportFileName="jass-ayurveda-catalog.csv"
+        exportFileName="jass-products-catalog.csv"
       />
 
       {/* Delete Confirmation Modal */}

@@ -176,7 +176,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {!collapsed && (
             <div>
               <span className="font-serif font-bold text-sm tracking-wide text-[#2D2A26] block leading-tight">
-                JASS AYURVEDA
+                JASS PRODUCTS
               </span>
               <span className="text-[10px] text-[#8B6D43] tracking-widest uppercase block font-mono font-semibold">
                 Apothecary Console

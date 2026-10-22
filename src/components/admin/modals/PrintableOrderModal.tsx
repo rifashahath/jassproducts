@@ -68,9 +68,9 @@ export const PrintableOrderModal: React.FC<PrintableOrderModalProps> = ({
                   Authentic Botanical Formulations & Dispensary
                 </p>
                 <p className="text-xs text-neutral-600 mt-2">
-                  Nilgiris Distillery & Extraction Lab<br />
-                  Karnataka & Tamil Nadu, India<br />
-                  GSTIN: 29AABCJ1984K1Z4
+                  13B Bright Avenue, Kuniyamuthur &amp; Karumbukkadai<br />
+                  Coimbatore, Tamil Nadu 641008, India<br />
+                  Ph: 070922 03886 / 97151 63119 | GSTIN: 29AABCJ1984K1Z4
                 </p>
               </div>
             </div>

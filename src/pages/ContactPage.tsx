@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, MessageSquare, Sparkles } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, MessageSquare, Sparkles, MessageCircle, ExternalLink, PhoneCall } from 'lucide-react';
 import { gsap, useGSAP } from '../lib/gsap';
 
 interface ContactPageProps {
@@ -213,13 +213,76 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
 
         {/* Right Column: Information Cards (5 cols) */}
         <div className="gsap-contact-info lg:col-span-5 flex flex-col gap-6">
+          {/* Direct Channels */}
           <div className="p-6 sm:p-8 rounded-3xl bg-[#fbfbf9] border border-[#d2c2ad]/40 shadow-xs space-y-6">
             <h3 className="font-serif text-xl font-bold text-neutral-900 tracking-wide uppercase">
               Direct Channels
             </h3>
 
+            {/* Phone Helplines */}
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#8b6d43]/10 text-[#8b6d43] flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#8b6d43]/10 text-[#8b6d43] flex items-center justify-center shrink-0">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <span className="text-[10px] font-bold tracking-widest text-[#8b6d43] uppercase block">
+                  Apothecary Helpline & Orders
+                </span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1">
+                  <a
+                    href="tel:07092203886"
+                    className="text-xs font-semibold text-neutral-900 hover:text-[#8b6d43] transition-colors inline-flex items-center gap-1.5"
+                  >
+                    <span>070922 03886</span>
+                  </a>
+                  <span className="hidden sm:inline text-neutral-300">•</span>
+                  <a
+                    href="tel:9715163119"
+                    className="text-xs font-semibold text-neutral-900 hover:text-[#8b6d43] transition-colors inline-flex items-center gap-1.5"
+                  >
+                    <span>97151 63119</span>
+                  </a>
+                </div>
+                <p className="text-[11px] text-neutral-500 mt-0.5">Available for calls & direct order assistance</p>
+              </div>
+            </div>
+
+            {/* WhatsApp Concierge */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center shrink-0">
+                <MessageCircle className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <span className="text-[10px] font-bold tracking-widest text-emerald-800 uppercase block">
+                  WhatsApp Concierge
+                </span>
+                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                  <a
+                    href="https://wa.me/919715163119?text=Hello%20Jass%20Products%2C%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20products."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-medium transition-colors shadow-2xs"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>WhatsApp 97151 63119</span>
+                  </a>
+                  <a
+                    href="https://wa.me/917092203886?text=Hello%20Jass%20Products%2C%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20products."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-black text-white text-[11px] font-medium transition-colors shadow-2xs"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>WhatsApp 070922 03886</span>
+                  </a>
+                </div>
+                <p className="text-[11px] text-neutral-500 mt-1">Instant consultation, product advisory & dispatch status</p>
+              </div>
+            </div>
+
+            {/* Concierge Email */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-[#8b6d43]/10 text-[#8b6d43] flex items-center justify-center shrink-0">
                 <Mail className="w-5 h-5" />
               </div>
               <div>
@@ -236,21 +299,9 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
               </div>
             </div>
 
+            {/* Concierge Hours */}
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#8b6d43]/10 text-[#8b6d43] flex items-center justify-center flex-shrink-0">
-                <Phone className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[10px] font-bold tracking-widest text-[#8b6d43] uppercase block">
-                  Apothecary Helpline
-                </span>
-                <span className="text-xs font-medium text-neutral-800">+91 (0) 800-JASS-VEDA</span>
-                <p className="text-[11px] text-neutral-500 mt-0.5">Toll-free customer guidance</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#8b6d43]/10 text-[#8b6d43] flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#8b6d43]/10 text-[#8b6d43] flex items-center justify-center shrink-0">
                 <Clock className="w-5 h-5" />
               </div>
               <div>
@@ -263,18 +314,81 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
                 <p className="text-[11px] text-neutral-500 mt-0.5">Closed Sundays & Lunar Observances</p>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#8b6d43]/10 text-[#8b6d43] flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[10px] font-bold tracking-widest text-[#8b6d43] uppercase block">
-                  Studio Headquarters
-                </span>
-                <p className="text-xs text-neutral-700 leading-relaxed">
-                  Heritage Botanical House, Veda Way, Indiranagar, Bengaluru, KA 560038, India
+          {/* Dispensary Locations */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#fbfbf9] border border-[#d2c2ad]/40 shadow-xs space-y-5">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-[#8b6d43]" />
+              <h3 className="font-serif text-lg font-bold text-neutral-900 tracking-wide uppercase">
+                Dispensary Locations
+              </h3>
+            </div>
+            <p className="text-xs text-neutral-600 leading-relaxed">
+              Visit our authentic botanical dispensaries in Coimbatore, Tamil Nadu:
+            </p>
+
+            <div className="space-y-4">
+              {/* Location 1: Karumbukkadai */}
+              <div className="p-4 rounded-2xl bg-white border border-[#d2c2ad]/50 shadow-2xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold tracking-widest text-[#8b6d43] uppercase">
+                    Dispensary 01 • Karumbukkadai
+                  </span>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Near+Noor+Sait+Primary+School+Karumbukkadai+Coimbatore+Tamil+Nadu+641008"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-semibold text-[#8b6d43] hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Map</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+                <p className="text-xs font-medium text-neutral-800 leading-relaxed">
+                  Near Noor Sait Primary School, Karumbukkadai, Coimbatore, Tamil Nadu – 641008
                 </p>
+                <div className="pt-2 border-t border-neutral-100 flex flex-wrap items-center gap-3 text-[11px] text-neutral-600">
+                  <span>Phone:</span>
+                  <a href="tel:07092203886" className="text-neutral-900 font-semibold hover:text-[#8b6d43]">
+                    070922 03886
+                  </a>
+                  <span>\</span>
+                  <a href="tel:9715163119" className="text-neutral-900 font-semibold hover:text-[#8b6d43]">
+                    97151 63119
+                  </a>
+                </div>
+              </div>
+
+              {/* Location 2: Kuniyamuthur */}
+              <div className="p-4 rounded-2xl bg-white border border-[#d2c2ad]/50 shadow-2xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold tracking-widest text-[#8b6d43] uppercase">
+                    Dispensary 02 • Kuniyamuthur
+                  </span>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=13b+bright+avenue+kuniyamuthur+Coimbatore+641008"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-semibold text-[#8b6d43] hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Map</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+                <p className="text-xs font-medium text-neutral-800 leading-relaxed">
+                  13B, Bright Avenue, Kuniyamuthur, Coimbatore, Tamil Nadu – 641008
+                </p>
+                <div className="pt-2 border-t border-neutral-100 flex flex-wrap items-center gap-3 text-[11px] text-neutral-600">
+                  <span>Phone:</span>
+                  <a href="tel:07092203886" className="text-neutral-900 font-semibold hover:text-[#8b6d43]">
+                    070922 03886
+                  </a>
+                  <span>\</span>
+                  <a href="tel:9715163119" className="text-neutral-900 font-semibold hover:text-[#8b6d43]">
+                    97151 63119
+                  </a>
+                </div>
               </div>
             </div>
           </div>

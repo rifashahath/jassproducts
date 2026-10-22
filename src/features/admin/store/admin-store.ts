@@ -692,7 +692,7 @@ function generateSeedCms(): StorefrontCmsConfig {
     heroSubheadline: "Handcrafted in small batches across Karnataka & Tamil Nadu for Indian hair and scalp resilience.",
     footerTagline: "Pure Herbal Formulations & Apothecary Dispensary",
     contactEmail: "apothecary@jassproducts.com",
-    contactPhone: "+91 98450 12345",
+    contactPhone: "070922 03886 / 97151 63119",
     freeShippingAbove: 499,
   };
 }

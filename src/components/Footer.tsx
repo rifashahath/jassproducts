@@ -73,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </div>
           </div>
           <div className="max-w-xs text-xs text-[#ebe3d5]/60 leading-relaxed uppercase tracking-wider">
-            Crafted in Karnataka & Tamil Nadu for Indian hair and scalp resilience against borewell hard water.
+            Crafted in Coimbatore, Tamil Nadu for Indian hair and scalp resilience against borewell hard water.
           </div>
         </div>
 
@@ -179,13 +179,27 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </button>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={(e) => handleLinkClick(e, 'contact')}
-                  className="hover:text-[#8b6d43] transition-colors cursor-pointer bg-transparent border-0 p-0 text-left"
+                <a
+                  href="https://wa.me/919715163119?text=Hello%20Jass%20Products%2C%20I%20have%20an%20inquiry"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-400 text-emerald-400/90 transition-colors inline-flex items-center gap-1.5"
                 >
-                  WhatsApp Concierge
-                </button>
+                  <span>WhatsApp Concierge</span>
+                </a>
+              </li>
+              <li className="pt-2 border-t border-[#2e2a26] text-xs">
+                <span className="text-[10px] font-mono tracking-widest uppercase text-[#8b6d43] block mb-1">
+                  Helpline Numbers
+                </span>
+                <div className="flex flex-col gap-1 font-mono text-xs text-[#ebe3d5]/90">
+                  <a href="tel:07092203886" className="hover:text-[#8b6d43] transition-colors">
+                    070922 03886
+                  </a>
+                  <a href="tel:9715163119" className="hover:text-[#8b6d43] transition-colors">
+                    97151 63119
+                  </a>
+                </div>
               </li>
             </ul>
           </div>
@@ -219,6 +233,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </button>
               </form>
             )}
+          </div>
+        </div>
+
+        {/* Dispensary Locations Row */}
+        <div className="py-6 border-b border-[#2e2a26] text-xs text-[#ebe3d5]/70 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-6">
+            <span className="text-[10px] font-mono tracking-widest uppercase text-[#8b6d43] font-semibold shrink-0">
+              Coimbatore Dispensaries:
+            </span>
+            <span>Near Noor Sait Primary School, Karumbukkadai, Coimbatore – 641008</span>
+            <span className="hidden lg:inline text-[#ebe3d5]/30">•</span>
+            <span>13B Bright Avenue, Kuniyamuthur, Coimbatore – 641008</span>
+          </div>
+          <div className="flex items-center gap-3 text-xs font-mono text-[#ebe3d5]/90">
+            <a href="tel:07092203886" className="hover:text-[#8b6d43] transition-colors">070922 03886</a>
+            <span className="text-[#ebe3d5]/30">\</span>
+            <a href="tel:9715163119" className="hover:text-[#8b6d43] transition-colors">97151 63119</a>
           </div>
         </div>
 

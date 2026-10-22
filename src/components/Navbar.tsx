@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Menu, X, Package, HelpCircle, Truck, CircleUser } from 'lucide-react';
+import { ShoppingBag, Menu, X, Package, HelpCircle, Truck, CircleUser, Phone, MessageCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 interface NavbarProps {
@@ -191,6 +191,39 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
               <HelpCircle className="w-4 h-4" />
               <span>Help & FAQ</span>
             </button>
+            <div className="pt-3 border-t border-neutral-200 flex flex-col gap-2">
+              <span className="text-[10px] font-mono tracking-widest uppercase text-[#8b6d43] font-semibold">
+                Helpline & Concierge
+              </span>
+              <div className="flex flex-col gap-1.5 text-xs">
+                <div className="flex items-center gap-3">
+                  <a
+                    href="tel:07092203886"
+                    className="text-neutral-900 font-semibold hover:text-[#8b6d43] inline-flex items-center gap-1.5"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-[#8b6d43]" />
+                    <span>070922 03886</span>
+                  </a>
+                  <span className="text-neutral-300">•</span>
+                  <a
+                    href="tel:9715163119"
+                    className="text-neutral-900 font-semibold hover:text-[#8b6d43] inline-flex items-center gap-1.5"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-[#8b6d43]" />
+                    <span>97151 63119</span>
+                  </a>
+                </div>
+                <a
+                  href="https://wa.me/919715163119?text=Hello%20Jass%20Products"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald-700 font-medium inline-flex items-center gap-1.5 hover:underline"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>Chat on WhatsApp</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -6,8 +6,8 @@ export const SettingsView: React.FC = () => {
   const [currency, setCurrency] = useState("INR (₹)");
   const [gstin, setGstin] = useState("29AABCJ1984K1Z4");
   const [supportEmail, setSupportEmail] = useState("apothecary@jassproducts.com");
-  const [supportPhone, setSupportPhone] = useState("+91 98450 12345");
-  const [address, setAddress] = useState("Nilgiris Distillery & Extraction Lab, Ooty Road, Karnataka & Tamil Nadu");
+  const [supportPhone, setSupportPhone] = useState("070922 03886 / 97151 63119");
+  const [address, setAddress] = useState("Dispensary 1: Near Noor Sait Primary School, Karumbukkadai | Dispensary 2: 13B Bright Avenue, Kuniyamuthur, Coimbatore, Tamil Nadu 641008");
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {

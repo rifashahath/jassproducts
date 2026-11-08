@@ -8,6 +8,11 @@ interface CategoriesPageProps {
   initialCategory?: string;
 }
 
+export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate, initialCategory }) => {
+  const [productsList, setProductsList] = useState<Product[]>(defaultProducts);
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'All');
+  const catContainerRef = useRef<HTMLDivElement>(null);
+
   const availableCategories = useMemo(() => {
     const list = ['All', 'Health Care', 'Hair Care', 'Skincare & Creams', 'Lip Care'];
     productsList.forEach((p) => {
@@ -24,11 +29,6 @@ interface CategoriesPageProps {
     });
     return list;
   }, [productsList]);
-
-export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate, initialCategory }) => {
-  const [productsList, setProductsList] = useState<Product[]>(defaultProducts);
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'All');
-  const catContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSelectedCategory(initialCategory || 'All');

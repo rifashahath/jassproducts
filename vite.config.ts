@@ -39,6 +39,7 @@ function apiDevPlugin(): Plugin {
           'verify-razorpay-payment',
           'revalidate-cart',
           'cancel-order',
+          'admin-product',
         ];
         if (!validEndpoints.includes(endpoint)) {
           return next();

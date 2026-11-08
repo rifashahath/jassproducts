@@ -14,7 +14,7 @@ import {
   Leaf,
   Sparkles,
 } from 'lucide-react';
-import { Product, products as defaultProducts } from '../lib/products';
+import { Product, fetchLiveProducts, products as defaultProducts } from '../lib/products';
 import { ProductCard } from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
 import { gsap, useGSAP } from '../lib/gsap';
@@ -136,12 +136,32 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
   );
 
   useEffect(() => {
-    const found = defaultProducts.find((p) => String(p.id) === String(productId)) || defaultProducts[0];
+    let active = true;
+    const found = defaultProducts.find((p) => String(p.id) === String(productId) || p.slug === productId) || defaultProducts[0];
     setProduct(found);
     setSelectedImage(found.image);
     setQuantity(1);
     setPinResult(null);
     window.scrollTo({ top: 0, behavior: 'instant' });
+
+    async function loadLive() {
+      try {
+        const liveItems = await fetchLiveProducts();
+        if (!active || !liveItems || liveItems.length === 0) return;
+        const liveFound = liveItems.find((p) => String(p.id) === String(productId) || p.slug === productId);
+        if (liveFound) {
+          setProduct(liveFound);
+          setSelectedImage(liveFound.image);
+        }
+      } catch (err) {
+        console.warn('Could not load live product:', err);
+      }
+    }
+    loadLive();
+
+    return () => {
+      active = false;
+    };
   }, [productId]);
 
   if (!product) return null;

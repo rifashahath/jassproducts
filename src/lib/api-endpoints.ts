@@ -23,7 +23,11 @@
  * a build failure instead of a 404 discovered during a customer's checkout.
  */
 export type ApiEndpoint =
-  "create-razorpay-order" | "verify-razorpay-payment" | "revalidate-cart" | "cancel-order";
+  | "create-razorpay-order"
+  | "verify-razorpay-payment"
+  | "revalidate-cart"
+  | "cancel-order"
+  | "admin-product";
 
 /**
  * Trailing slashes are trimmed because the value is operator-supplied through a dashboard

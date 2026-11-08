@@ -5,6 +5,7 @@
 
 import { products as seedCatalog, type Product } from "../../../lib/products.ts";
 import { supabase, isSupabaseConfigured } from "../../../lib/supabase.ts";
+import { apiUrl } from "../../../lib/api-endpoints.ts";
 import type {
   ExtendedProduct,
   AdminOrderRecord,
@@ -843,12 +844,48 @@ export async function fetchAdminProducts(): Promise<ExtendedProduct[]> {
   const local = getStoredAdminProducts();
   if (isSupabaseConfigured) {
     try {
-      const { data, error } = await supabase.from("products").select("*");
+      const { data, error } = await supabase.from("products").select("*").order("id", { ascending: true });
       if (!error && data && data.length > 0) {
-        // Merge or sync
-        return local;
+        const mapped: ExtendedProduct[] = data.map((row: any) => {
+          const existing = local.find((l) => String(l.id) === String(row.id));
+          return {
+            id: row.id,
+            sku: existing?.sku || `JP-${(row.category || "BOT").slice(0, 2).toUpperCase()}-${String(row.id).replace(/\D/g, "") || "101"}`,
+            barcode: existing?.barcode || `8906045${Math.floor(1000 + Math.random() * 9000)}`,
+            name: row.name,
+            slug: row.slug || row.name.toLowerCase().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-"),
+            category: row.category,
+            subcategory: existing?.subcategory || row.category,
+            brand: "Jass Products",
+            price: Number(row.price),
+            salePrice: row.sale_price ? Number(row.sale_price) : undefined,
+            costPrice: existing?.costPrice || Math.round(Number(row.price) * 0.45),
+            stockQuantity: row.stock ?? 50,
+            stockStatus: (row.stock ?? 50) > 15 ? "IN_STOCK" : (row.stock ?? 50) > 0 ? "LOW_STOCK" : "OUT_OF_STOCK",
+            minStockThreshold: existing?.minStockThreshold || 15,
+            status: row.is_active ? "PUBLISHED" : "DRAFT",
+            image: row.image,
+            hoverImage: row.hover_image || row.image,
+            gallery: Array.isArray(row.gallery) && row.gallery.length > 0 ? row.gallery : [row.image],
+            description: row.description || "",
+            note: row.note || "",
+            rating: Number(row.rating) || 5.0,
+            reviewsCount: row.reviews_count || 0,
+            badge: row.badge || "",
+            inStock: row.in_stock ?? ((row.stock ?? 50) > 0),
+            gstRate: existing?.gstRate || 18,
+            hsnCode: existing?.hsnCode || "3305.90.11",
+            weight: existing?.weight || 0.35,
+            tags: existing?.tags || [row.category, "Ayurvedic"],
+            isFeatured: row.is_featured ?? false,
+          };
+        });
+        saveStoredAdminProducts(mapped);
+        return mapped;
       }
-    } catch {}
+    } catch (e) {
+      console.warn("fetchAdminProducts failed:", e);
+    }
   }
   return local;
 }
@@ -858,18 +895,19 @@ export async function saveProduct(productData: Partial<ExtendedProduct>): Promis
   const existingIdx = list.findIndex((p) => String(p.id) === String(productData.id));
 
   let updated: ExtendedProduct[];
+  let savedItem: ExtendedProduct;
   if (existingIdx >= 0) {
-    const merged = { ...list[existingIdx], ...productData } as ExtendedProduct;
+    savedItem = { ...list[existingIdx], ...productData } as ExtendedProduct;
     updated = [...list];
-    updated[existingIdx] = merged;
+    updated[existingIdx] = savedItem;
   } else {
-    const newProd = {
+    savedItem = {
       ...productData,
       id: productData.id || `jp-${Date.now().toString(36)}`,
       sku: productData.sku || `JP-${(productData.category || "BOT").slice(0, 2).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
       barcode: `8906045${Math.floor(1000 + Math.random() * 9000)}`,
       status: "PUBLISHED",
-      stockQuantity: productData.stockQuantity || 50,
+      stockQuantity: productData.stockQuantity !== undefined ? productData.stockQuantity : 50,
       stockStatus: (productData.stockQuantity || 50) > 15 ? "IN_STOCK" : "LOW_STOCK",
       costPrice: productData.costPrice || Math.round((productData.price || 50) * 0.45),
       price: productData.price || 50,
@@ -882,10 +920,27 @@ export async function saveProduct(productData: Partial<ExtendedProduct>): Promis
       weight: 0.35,
       slug: (productData.name || "item").toLowerCase().replace(/\s+/g, "-"),
     } as ExtendedProduct;
-    updated = [newProd, ...list];
+    updated = [savedItem, ...list];
   }
 
+  // 1. Update local cache immediately
   saveStoredAdminProducts(updated);
+
+  // 2. Persist to live cloud backend
+  try {
+    const res = await fetch(apiUrl("admin-product"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(savedItem),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      console.log("Product persisted to Supabase:", data);
+    }
+  } catch (err) {
+    console.warn("Could not sync product to serverless API:", err);
+  }
+
   return updated;
 }
 
@@ -893,6 +948,15 @@ export async function deleteProduct(productId: string | number): Promise<Extende
   const list = getStoredAdminProducts();
   const updated = list.filter((p) => String(p.id) !== String(productId));
   saveStoredAdminProducts(updated);
+
+  try {
+    await fetch(`${apiUrl("admin-product")}?id=${encodeURIComponent(String(productId))}`, {
+      method: "DELETE",
+    });
+  } catch (err) {
+    console.warn("Could not sync product deletion to serverless API:", err);
+  }
+
   return updated;
 }
 
@@ -909,11 +973,36 @@ export async function fetchAdminOrders(): Promise<AdminOrderRecord[]> {
   const local = getStoredAdminOrders();
   if (isSupabaseConfigured) {
     try {
-      const { data, error } = await supabase.from("orders").select("*");
+      const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
       if (!error && data && data.length > 0) {
-        return local;
+        const mapped: AdminOrderRecord[] = data.map((row: any) => ({
+          id: row.id,
+          orderNumber: row.order_number || row.id,
+          customerName: row.customer_name || "Customer",
+          customerEmail: row.customer_email || row.user_email || "",
+          customerPhone: row.customer_phone || row.user_phone || "",
+          totalAmount: Number(row.total_amount || row.total || 0),
+          subtotal: Number(row.subtotal || 0),
+          shippingCost: Number(row.shipping_cost || 0),
+          gstAmount: Number(row.gst || 0),
+          discountAmount: Number(row.discount || 0),
+          status: (row.status?.toUpperCase() || "PENDING") as AdminOrderStatus,
+          paymentStatus: row.payment_id ? "PAID" : "PENDING",
+          paymentMethod: row.payment_method?.toUpperCase() || "RAZORPAY",
+          createdAt: row.created_at || new Date().toISOString(),
+          shippingCity: row.shipping_address?.city || "Coimbatore",
+          shippingState: row.shipping_address?.state || "Tamil Nadu",
+          itemsCount: Array.isArray(row.items) ? row.items.length : 1,
+          itemsSummary: row.items_summary || "Ayurvedic Botanical Order",
+          trackingNumber: row.tracking_number,
+          courier: row.courier,
+        }));
+        saveStoredAdminOrders(mapped);
+        return mapped;
       }
-    } catch {}
+    } catch (e) {
+      console.warn("fetchAdminOrders failed:", e);
+    }
   }
   return local;
 }
@@ -938,6 +1027,21 @@ export async function updateOrderStatus(
     return o;
   });
   saveStoredAdminOrders(updated);
+
+  if (isSupabaseConfigured) {
+    try {
+      void supabase
+        .from("orders")
+        .update({
+          status: newStatus.toLowerCase(),
+          courier: courier || undefined,
+          tracking_number: awbNumber || undefined,
+          updated_at: new Date().toISOString(),
+        })
+        .or(`id.eq.${orderId},order_number.eq.${orderId}`);
+    } catch {}
+  }
+
   return updated;
 }
 
@@ -1042,6 +1146,14 @@ export async function adjustProductStock(
   const updatedProds = [...prods];
   updatedProds[prodIdx] = updatedProd;
   saveStoredAdminProducts(updatedProds);
+
+  try {
+    void fetch(apiUrl("admin-product"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedProd),
+    });
+  } catch {}
 
   // Append audit log
   const newLog: StockMovementLog = {

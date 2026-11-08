@@ -14,6 +14,7 @@ import { DataTable, type ColumnDef } from "../common/DataTable.tsx";
 import {
   getStoredAdminProducts,
   getStoredAdminCategories,
+  fetchAdminProducts,
   deleteProduct,
 } from "../../../features/admin/store/admin-store.ts";
 import type { ExtendedProduct } from "../../../types/admin.ts";
@@ -35,9 +36,15 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
   const [stockFilter, setStockFilter] = useState<string>("ALL");
   const [deletingProduct, setDeletingProduct] = useState<ExtendedProduct | null>(null);
 
-  const loadData = () => {
+  const loadData = async () => {
     setProducts(getStoredAdminProducts());
     setCategories(getStoredAdminCategories() as never);
+    try {
+      const live = await fetchAdminProducts();
+      if (live && live.length > 0) {
+        setProducts(live);
+      }
+    } catch {}
   };
 
   useEffect(() => {

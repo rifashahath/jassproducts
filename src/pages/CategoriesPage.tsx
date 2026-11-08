@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Product, fetchLiveProducts, products as defaultProducts } from '../lib/products';
 import { ProductCard } from '../components/ProductCard';
 import { gsap, useGSAP } from '../lib/gsap';
@@ -8,13 +8,22 @@ interface CategoriesPageProps {
   initialCategory?: string;
 }
 
-const categories = [
-  'All',
-  'Health Care',
-  'Hair Care',
-  'Skincare & Creams',
-  'Lip Care',
-];
+  const availableCategories = useMemo(() => {
+    const list = ['All', 'Health Care', 'Hair Care', 'Skincare & Creams', 'Lip Care'];
+    productsList.forEach((p) => {
+      if (p.category) {
+        const normalized = p.category
+          .toLowerCase()
+          .split(' ')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ');
+        if (!list.some((existing) => existing.toLowerCase() === normalized.toLowerCase())) {
+          list.push(normalized);
+        }
+      }
+    });
+    return list;
+  }, [productsList]);
 
 export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate, initialCategory }) => {
   const [productsList, setProductsList] = useState<Product[]>(defaultProducts);
@@ -93,7 +102,7 @@ export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate, init
 
         {/* Category Navigation Bar */}
         <div className="inline-flex items-center justify-center flex-wrap gap-1.5 bg-[#ede6dc]/80 p-1.5 rounded-full border border-[#d2c2ad]/70 shadow-2xs max-w-3xl mx-auto">
-          {categories.map((cat) => {
+          {availableCategories.map((cat) => {
             const isActive =
               selectedCategory.toLowerCase() === cat.toLowerCase() ||
               (selectedCategory.toLowerCase() !== 'all' &&

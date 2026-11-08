@@ -12,6 +12,7 @@ import {
 import { DataTable, type ColumnDef } from "../common/DataTable.tsx";
 import {
   getStoredAdminOrders,
+  fetchAdminOrders,
   updateOrderStatus,
 } from "../../../features/admin/store/admin-store.ts";
 import type { AdminOrderRecord, AdminOrderStatus } from "../../../types/admin.ts";
@@ -28,8 +29,14 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
   const [orders, setOrders] = useState<AdminOrderRecord[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
-  const loadData = () => {
+  const loadData = async () => {
     setOrders(getStoredAdminOrders());
+    try {
+      const live = await fetchAdminOrders();
+      if (live && live.length > 0) {
+        setOrders(live);
+      }
+    } catch {}
   };
 
   useEffect(() => {

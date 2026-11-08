@@ -114,15 +114,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const loadProfile = async (u: User) => {
       let role = "CUSTOMER";
       let displayName = "";
+
+      const metadataRole = (u.app_metadata?.role || u.user_metadata?.role) as string | undefined;
+      const isAdminEmail =
+        (u.email || "").toLowerCase() === "dr.jass@jassproducts.com" ||
+        (u.email || "").toLowerCase() === "admin@jassproducts.com";
+
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from("profiles")
           .select("role, name, full_name, email")
           .eq("id", u.id)
           .maybeSingle();
-        if (error) {
-          console.warn("Profile lookup failed:", error.message);
-        } else if (data) {
+        if (data) {
           const row = data as { role?: string; name?: string; full_name?: string };
           role = row.role || "CUSTOMER";
           displayName = row.name || row.full_name || "";
@@ -130,14 +134,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (e) {
         console.warn("Profile lookup threw:", e);
       }
+
+      if (metadataRole && isAdminRole(metadataRole)) {
+        role = metadataRole;
+      } else if (isAdminEmail) {
+        role = "SUPER_ADMIN";
+      }
+
       if (!active) return;
-      setUser({
+      const authUser: AuthUser = {
         id: u.id,
         email: u.email || "",
-        name: displayName || u.email?.split("@")[0] || "Customer",
+        name: displayName || (u.user_metadata?.full_name as string) || u.email?.split("@")[0] || "Customer",
         role,
-      });
-      setIsAdmin(isAdminRole(role));
+      };
+
+      setUser(authUser);
+      const isAdministrator = isAdminRole(role);
+      setIsAdmin(isAdministrator);
+
+      if (isAdministrator) {
+        localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(authUser));
+      }
     };
 
     const applySession = async (s: Session | null) => {
@@ -188,55 +206,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = useCallback(async (email: string, password: string) => {
     const trimmedEmail = email.trim().toLowerCase();
-    const isAdminEmail =
-      trimmedEmail === "dr.jass@jassproducts.com" ||
-      trimmedEmail === "admin@jassproducts.com";
-
-    // Immediate fallback for admin credentials when Supabase is unconfigured or using standard admin password
-    if (isAdminEmail && (!isSupabaseConfigured || password === "admin" || password === "admin123")) {
-      const adminUser: AuthUser = {
-        id: "usr-1",
-        email: trimmedEmail,
-        name: "Dr. Jass",
-        role: "SUPER_ADMIN",
-      };
-      localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(adminUser));
-      setUser(adminUser);
-      setIsAdmin(true);
-      return { error: null };
-    }
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email: trimmedEmail, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email: trimmedEmail, password });
       if (error) {
-        if (isAdminEmail && (password === "admin" || password === "admin123" || !isSupabaseConfigured)) {
-          const adminUser: AuthUser = {
-            id: "usr-1",
-            email: trimmedEmail,
-            name: "Dr. Jass",
-            role: "SUPER_ADMIN",
-          };
-          localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(adminUser));
-          setUser(adminUser);
-          setIsAdmin(true);
-          return { error: null };
-        }
         return { error: mapAuthError(error.message) };
+      }
+      if (data?.session) {
+        setSession(data.session);
+        if (data.session.user) {
+          await loadProfile(data.session.user);
+        }
       }
       return { error: null };
     } catch {
-      if (isAdminEmail) {
-        const adminUser: AuthUser = {
-          id: "usr-1",
-          email: trimmedEmail,
-          name: "Dr. Jass",
-          role: "SUPER_ADMIN",
-        };
-        localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(adminUser));
-        setUser(adminUser);
-        setIsAdmin(true);
-        return { error: null };
-      }
       return {
         error: isSupabaseConfigured
           ? "Authentication service is temporarily unreachable. Please try again."

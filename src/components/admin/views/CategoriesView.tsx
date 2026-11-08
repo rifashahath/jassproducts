@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import {
   getStoredAdminCategories,
+  fetchAdminCategories,
   getStoredAdminProducts,
   deleteCategory,
 } from "../../../features/admin/store/admin-store.ts";
@@ -44,6 +45,7 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({
 
   useEffect(() => {
     loadData();
+    fetchAdminCategories().then(() => loadData()).catch(() => {});
     window.addEventListener("categories_updated", loadData);
     window.addEventListener("products_updated", loadData);
     return () => {

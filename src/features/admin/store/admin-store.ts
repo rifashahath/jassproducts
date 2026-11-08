@@ -100,72 +100,42 @@ function generateSeedProducts(): ExtendedProduct[] {
 function generateSeedCategories(): CategoryItem[] {
   return [
     {
-      id: "cat-hair",
-      name: "HAIR CARE",
-      slug: "hair-care",
-      description: "Rosemary, neem and vital bhringraj formulations engineered for scalp balance and borewell hard water resilience.",
-      image: "/products/herbal-shampoo/main.webp",
-      displayOrder: 1,
-      status: "ACTIVE",
-      productCount: 2,
-    },
-    {
-      id: "cat-skin",
-      name: "SKIN RENEWAL",
-      slug: "skin-renewal",
-      description: "Pure Kashmiri saffron threads, terracotta clays and cold-pressed botanical serums targeting cellular radiance.",
-      image: "/products/saffron-gel/main.webp",
-      displayOrder: 2,
-      status: "ACTIVE",
-      productCount: 2,
-    },
-    {
       id: "cat-health",
       name: "HEALTH CARE",
       slug: "health-care",
-      description: "100% pure organic herbal vitality powders including Beetroot, Carrot and Moringa leaves for holistic wellness.",
+      description: "100% pure organic herbal vitality powders including Amla, Beetroot, Carrot, and Moringa leaves for holistic wellness.",
       image: "/products/amla-powder/main.webp",
+      displayOrder: 1,
+      status: "ACTIVE",
+      productCount: 4,
+    },
+    {
+      id: "cat-hair",
+      name: "HAIR CARE",
+      slug: "hair-care",
+      description: "Rosemary, neem, and shikakai formulations engineered for root clarifying, dandruff elimination, and lustrous softness.",
+      image: "/products/herbal-shampoo/main.webp",
+      displayOrder: 2,
+      status: "ACTIVE",
+      productCount: 1,
+    },
+    {
+      id: "cat-skincare",
+      name: "SKINCARE & CREAMS",
+      slug: "skincare-and-creams",
+      description: "High-potency botanical day and night creams, broad spectrum mineral sunscreen, peptide complexes, and saffron radiance gel.",
+      image: "/products/night-cream/main.webp",
       displayOrder: 3,
       status: "ACTIVE",
-      productCount: 1,
+      productCount: 6,
     },
     {
-      id: "cat-soap",
-      name: "SOAP & BATH",
-      slug: "soap-and-bath",
-      description: "Handcrafted cold-processed artisanal soaps with neem, pure turmeric, and cold-pressed virgin coconut oils.",
+      id: "cat-lipcare",
+      name: "LIP CARE",
+      slug: "lip-care",
+      description: "Organic beeswax, beetroot extract, and cold-pressed almond butter balm for deeply hydrated and naturally tinted lips.",
       image: "/products/herbal-lip-balm/main.webp",
       displayOrder: 4,
-      status: "ACTIVE",
-      productCount: 1,
-    },
-    {
-      id: "cat-face",
-      name: "FACE NOURISH",
-      slug: "face-nourish",
-      description: "Deep restorative day and night elixirs, raw shea moisturizers, and rejuvenating gotu kola ceramides.",
-      image: "/products/night-cream/main.webp",
-      displayOrder: 5,
-      status: "ACTIVE",
-      productCount: 1,
-    },
-    {
-      id: "cat-body",
-      name: "BODY CARE",
-      slug: "body-care",
-      description: "Sulfate-free botanical washes infused with raw honey, mountain turmeric, and sandalwood shavings.",
-      image: "/products/sunscreen/main.webp",
-      displayOrder: 6,
-      status: "ACTIVE",
-      productCount: 1,
-    },
-    {
-      id: "cat-aroma",
-      name: "AROMATHERAPY",
-      slug: "aromatherapy",
-      description: "Deep indigo chamomile and star jasmine pillow mists crafted for nervous system tranquility and peaceful sleep.",
-      image: "/products/carrot-powder/main.webp",
-      displayOrder: 7,
       status: "ACTIVE",
       productCount: 1,
     },
@@ -1069,6 +1039,29 @@ export function getStoredAdminCategories(): CategoryItem[] {
 
 export function saveStoredAdminCategories(cats: CategoryItem[]) {
   setStored(KEYS.CATEGORIES, cats, "categories_updated");
+  try {
+    fetch("/api/admin-categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cats),
+    }).catch(() => {});
+  } catch {}
+}
+
+export async function fetchAdminCategories(): Promise<CategoryItem[]> {
+  try {
+    const res = await fetch("/api/admin-categories");
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        saveStoredAdminCategories(data);
+        return data;
+      }
+    }
+  } catch (err) {
+    console.warn("fetchAdminCategories error:", err);
+  }
+  return getStoredAdminCategories();
 }
 
 export async function saveCategory(catData: Partial<CategoryItem>): Promise<CategoryItem[]> {

@@ -250,7 +250,52 @@ export default {
       }
     }
 
-    // 5. Admin Live Customers endpoint
+    // 5. Admin Categories endpoint (persists live taxonomy)
+    if (url.pathname === "/api/admin-categories") {
+      const supabase = getSupabase(env);
+      if (request.method === "GET") {
+        try {
+          const { data, error } = await supabase.storage.from("images").download("site-categories.json");
+          if (!error && data) {
+            const text = await data.text();
+            return jsonResponse(JSON.parse(text), 200);
+          }
+        } catch {}
+
+        // Fallback: derive dynamically from distinct categories in products table
+        try {
+          const { data: prods } = await supabase.from("products").select("category");
+          const uniqueCats = Array.from(new Set((prods || []).map((p: any) => p.category).filter(Boolean)));
+          const defaultCats = uniqueCats.map((name: string, i: number) => ({
+            id: `cat-${name.toLowerCase().replace(/[^a-z0-9]/g, "-")}`,
+            name,
+            slug: name.toLowerCase().replace(/[^a-z0-9]/g, "-"),
+            description: `Apothecary ${name} collection`,
+            image: "/products/amla-powder/main.webp",
+            displayOrder: i + 1,
+            status: "ACTIVE",
+          }));
+          return jsonResponse(defaultCats, 200);
+        } catch {
+          return jsonResponse([], 200);
+        }
+      }
+
+      if (request.method === "POST") {
+        try {
+          const payload = await request.json();
+          await supabase.storage.from("images").upload("site-categories.json", JSON.stringify(payload), {
+            contentType: "application/json",
+            upsert: true,
+          });
+          return jsonResponse({ success: true, categories: payload }, 200);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || "Failed to save categories." }, 500);
+        }
+      }
+    }
+
+    // 6. Admin Live Customers endpoint
     if (url.pathname === "/api/admin-customers" && request.method === "GET") {
       try {
         const supabase = getSupabase(env);

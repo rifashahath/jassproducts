@@ -9,12 +9,12 @@ import { createClient } from "@supabase/supabase-js";
 export const SUPABASE_URL: string =
   (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_SUPABASE_URL) ||
   (typeof process !== "undefined" && process.env && (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL)) ||
-  "";
+  "https://duxjhmhgiacmuuqzfjxs.supabase.co";
 
 export const SUPABASE_ANON_KEY: string =
   (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY) ||
   (typeof process !== "undefined" && process.env && (process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY)) ||
-  "";
+  "sb_publishable_bf54nCpsk_-wlxHIY0Hh3A_AYiwZNV1";
 
 export const isSupabaseConfigured = Boolean(
   SUPABASE_URL &&

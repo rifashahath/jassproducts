@@ -158,6 +158,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ subpath = "dashboard", onN
               setEditingCategory(c);
               setIsCategoryFormOpen(true);
             }}
+            onOpenAddProduct={(catName) => {
+              setEditingProduct(catName ? ({ category: catName } as any) : null);
+              setIsProductFormOpen(true);
+            }}
+            onEditProduct={(p) => {
+              setEditingProduct(p);
+              setIsProductFormOpen(true);
+            }}
             onNavigate={onNavigate}
           />
         );

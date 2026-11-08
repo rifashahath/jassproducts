@@ -6,22 +6,15 @@
 
 import { createClient } from "@supabase/supabase-js";
 
-function getEnv(key: string): string {
-  try {
-    if (typeof import.meta !== "undefined" && (import.meta as any).env && (import.meta as any).env[key]) {
-      return (import.meta as any).env[key] as string;
-    }
-  } catch {}
-  try {
-    if (typeof process !== "undefined" && process.env && process.env[key]) {
-      return process.env[key] as string;
-    }
-  } catch {}
-  return "";
-}
+export const SUPABASE_URL: string =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_SUPABASE_URL) ||
+  (typeof process !== "undefined" && process.env && (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL)) ||
+  "";
 
-export const SUPABASE_URL = getEnv("VITE_SUPABASE_URL") || getEnv("SUPABASE_URL");
-export const SUPABASE_ANON_KEY = getEnv("VITE_SUPABASE_ANON_KEY") || getEnv("SUPABASE_ANON_KEY");
+export const SUPABASE_ANON_KEY: string =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY) ||
+  (typeof process !== "undefined" && process.env && (process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY)) ||
+  "";
 
 export const isSupabaseConfigured = Boolean(
   SUPABASE_URL &&

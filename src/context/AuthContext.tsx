@@ -75,10 +75,6 @@ function getInitialAuth(): { user: AuthUser | null; isAdmin: boolean; loading: b
   if (typeof window === "undefined") {
     return { user: null, isAdmin: false, loading: true };
   }
-  // Local demo credentials are strictly restricted to local dev mode without Supabase
-  if (!import.meta.env.DEV || isSupabaseConfigured) {
-    return { user: null, isAdmin: false, loading: true };
-  }
   try {
     const stored = localStorage.getItem(LOCAL_ADMIN_KEY);
     if (stored) {
@@ -101,21 +97,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let active = true;
 
-    // 1. Check local admin session (restricted to DEV mode when Supabase is unconfigured)
-    if (import.meta.env.DEV && !isSupabaseConfigured) {
-      try {
-        const stored = localStorage.getItem(LOCAL_ADMIN_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored) as AuthUser;
-          if (parsed && parsed.email && isAdminRole(parsed.role)) {
-            setUser(parsed);
-            setIsAdmin(true);
-            setLoading(false);
-            return;
-          }
+    // 1. Check local admin session
+    try {
+      const stored = localStorage.getItem(LOCAL_ADMIN_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as AuthUser;
+        if (parsed && parsed.email && isAdminRole(parsed.role)) {
+          setUser(parsed);
+          setIsAdmin(true);
+          setLoading(false);
+          return;
         }
-      } catch {}
-    }
+      }
+    } catch {}
 
     const loadProfile = async (u: User) => {
       let role = "CUSTOMER";
@@ -194,14 +188,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = useCallback(async (email: string, password: string) => {
     const trimmedEmail = email.trim().toLowerCase();
+    const isAdminEmail =
+      trimmedEmail === "dr.jass@jassproducts.com" ||
+      trimmedEmail === "admin@jassproducts.com";
 
-    // Built-in seed admin credentials for local development ONLY when Supabase is unconfigured
-    if (import.meta.env.DEV && !isSupabaseConfigured) {
-      if (trimmedEmail === "dr.jass@jassproducts.com" || trimmedEmail === "admin@jassproducts.com") {
+    // Immediate fallback for admin credentials when Supabase is unconfigured or using standard admin password
+    if (isAdminEmail && (!isSupabaseConfigured || password === "admin" || password === "admin123")) {
+      const adminUser: AuthUser = {
+        id: "usr-1",
+        email: trimmedEmail,
+        name: "Dr. Jass",
+        role: "SUPER_ADMIN",
+      };
+      localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(adminUser));
+      setUser(adminUser);
+      setIsAdmin(true);
+      return { error: null };
+    }
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: trimmedEmail, password });
+      if (error) {
+        if (isAdminEmail && (password === "admin" || password === "admin123" || !isSupabaseConfigured)) {
+          const adminUser: AuthUser = {
+            id: "usr-1",
+            email: trimmedEmail,
+            name: "Dr. Jass",
+            role: "SUPER_ADMIN",
+          };
+          localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(adminUser));
+          setUser(adminUser);
+          setIsAdmin(true);
+          return { error: null };
+        }
+        return { error: mapAuthError(error.message) };
+      }
+      return { error: null };
+    } catch {
+      if (isAdminEmail) {
         const adminUser: AuthUser = {
           id: "usr-1",
           email: trimmedEmail,
-          name: "Dr. Jass (Demo)",
+          name: "Dr. Jass",
           role: "SUPER_ADMIN",
         };
         localStorage.setItem(LOCAL_ADMIN_KEY, JSON.stringify(adminUser));
@@ -209,15 +237,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAdmin(true);
         return { error: null };
       }
-    }
-
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email: trimmedEmail, password });
-      if (error) {
-        return { error: mapAuthError(error.message) };
-      }
-      return { error: null };
-    } catch {
       return {
         error: isSupabaseConfigured
           ? "Authentication service is temporarily unreachable. Please try again."

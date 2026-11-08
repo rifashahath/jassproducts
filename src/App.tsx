@@ -23,6 +23,7 @@ import { FaqPage } from './pages/FaqPage';
 import { PoliciesPage } from './pages/PoliciesPage';
 import { AdminPage } from './pages/AdminPage';
 import { products as defaultProducts } from './lib/products';
+import { getStoredAdminBanners, fetchAdminBanners } from './features/admin/store/admin-store';
 
 function parseHash(rawHash?: string): { page: string; params: Record<string, string> } {
   const source = rawHash !== undefined
@@ -77,7 +78,34 @@ function MainApp() {
   });
   const [currentSlide, setCurrentSlide] = useState(0);
   const [scrollY, setScrollY] = useState(0);
-  const slides = ['/image.webp', '/img-2.webp', '/img-3.webp', '/img-4.webp'];
+
+  // Live Hero Showcase Banners from Admin Store
+  const DEFAULT_SLIDES = ['/image.webp', '/img-2.webp', '/img-3.webp', '/img-4.webp'];
+  const getBannerSlides = (): string[] => {
+    try {
+      const banners = getStoredAdminBanners();
+      const activeImages = banners
+        .filter((b) => b.active !== false && b.imageUrl)
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .map((b) => b.imageUrl);
+      return activeImages.length > 0 ? activeImages : DEFAULT_SLIDES;
+    } catch {
+      return DEFAULT_SLIDES;
+    }
+  };
+
+  const [slides, setSlides] = useState<string[]>(getBannerSlides);
+
+  useEffect(() => {
+    const updateBanners = () => {
+      setSlides(getBannerSlides());
+    };
+
+    window.addEventListener('banners_updated', updateBanners);
+    fetchAdminBanners().then(() => updateBanners()).catch(() => {});
+
+    return () => window.removeEventListener('banners_updated', updateBanners);
+  }, []);
   const heroRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
 

@@ -33,33 +33,49 @@ export const ReportsView: React.FC = () => {
     setProducts(getStoredAdminProducts());
   }, []);
 
-  const totalSales = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-  const totalOrders = orders.length;
+  // Filter orders according to selected time period
+  const filteredOrders = useMemo(() => {
+    if (timePeriod === "ALL") return orders;
+    const now = new Date();
+    const threshold = new Date();
+    if (timePeriod === "WEEK") {
+      threshold.setDate(now.getDate() - 7);
+    } else if (timePeriod === "MONTH") {
+      threshold.setDate(now.getDate() - 30);
+    }
+
+    return orders.filter((o) => {
+      const orderDate = new Date(o.createdAt);
+      return !isNaN(orderDate.getTime()) && orderDate >= threshold;
+    });
+  }, [orders, timePeriod]);
+
+  const totalSales = filteredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const totalOrders = filteredOrders.length;
   const estimatedTax = Math.round(totalSales * 0.18);
   const avgBasket = totalOrders > 0 ? Math.round(totalSales / totalOrders) : 0;
 
-  // Aggregate product performance from orders
-  const performanceData: ProductPerformanceRow[] = products.map((p) => {
-    let unitsSold = 0;
-    orders.forEach((o) => {
-      o.items.forEach((item) => {
-        if (String(item.id) === String(p.id) || item.name.toLowerCase() === p.name.toLowerCase()) {
-          unitsSold += item.quantity;
-        }
+  // Aggregate truthful product performance from orders
+  const performanceData: ProductPerformanceRow[] = useMemo(() => {
+    return products.map((p) => {
+      let unitsSold = 0;
+      filteredOrders.forEach((o) => {
+        o.items.forEach((item) => {
+          if (String(item.id) === String(p.id) || item.name.toLowerCase() === p.name.toLowerCase()) {
+            unitsSold += item.quantity;
+          }
+        });
       });
-    });
 
-    // Default minimum units if demo
-    if (unitsSold === 0) unitsSold = Math.floor(1 + Math.random() * 8);
-
-    return {
-      name: p.name,
-      category: p.category,
-      unitsSold,
-      revenue: unitsSold * p.price,
-      price: p.price,
-    };
-  }).sort((a, b) => b.revenue - a.revenue);
+      return {
+        name: p.name,
+        category: p.category,
+        unitsSold,
+        revenue: unitsSold * p.price,
+        price: p.price,
+      };
+    }).sort((a, b) => b.revenue - a.revenue);
+  }, [products, filteredOrders]);
 
   const columns: ColumnDef<ProductPerformanceRow>[] = [
     {

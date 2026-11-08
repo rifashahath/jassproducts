@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { Settings, Save, Check, ShieldCheck, Mail, MapPin, Building2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Settings, Save, Check, ShieldCheck, Mail, MapPin, Building2, Loader2 } from "lucide-react";
+
+const SETTINGS_STORAGE_KEY = "jass_store_settings_v1";
 
 export const SettingsView: React.FC = () => {
   const [storeName, setStoreName] = useState("JASS PRODUCTS");
@@ -9,11 +11,66 @@ export const SettingsView: React.FC = () => {
   const [supportPhone, setSupportPhone] = useState("070922 03886 / 97151 63119");
   const [address, setAddress] = useState("Dispensary 1: Near Noor Sait Primary School, Karumbukkadai | Dispensary 2: 13B Bright Avenue, Kuniyamuthur, Coimbatore, Tamil Nadu 641008");
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Load saved settings from server and localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.storeName) setStoreName(parsed.storeName);
+        if (parsed.currency) setCurrency(parsed.currency);
+        if (parsed.gstin) setGstin(parsed.gstin);
+        if (parsed.supportEmail) setSupportEmail(parsed.supportEmail);
+        if (parsed.supportPhone) setSupportPhone(parsed.supportPhone);
+        if (parsed.address) setAddress(parsed.address);
+      }
+    } catch {}
+
+    fetch("/api/admin-settings")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data && data.storeName) {
+          setStoreName(data.storeName);
+          if (data.currency) setCurrency(data.currency);
+          if (data.gstin) setGstin(data.gstin);
+          if (data.supportEmail) setSupportEmail(data.supportEmail);
+          if (data.supportPhone) setSupportPhone(data.supportPhone);
+          if (data.address) setAddress(data.address);
+          localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(data));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 2500);
+    setSaving(true);
+    const payload = {
+      storeName,
+      currency,
+      gstin,
+      supportEmail,
+      supportPhone,
+      address,
+      updatedAt: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
+      await fetch("/api/admin-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.warn("Failed to sync settings with server, saved locally:", err);
+    } finally {
+      setSaving(false);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    }
   };
 
   return (
@@ -135,10 +192,11 @@ export const SettingsView: React.FC = () => {
 
         <button
           type="submit"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#8B6D43] hover:bg-[#735732] text-white text-xs uppercase tracking-wider font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
+          disabled={saving}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#8B6D43] hover:bg-[#735732] disabled:opacity-60 text-white text-xs uppercase tracking-wider font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
         >
-          <Save className="h-4 w-4" />
-          <span>Save Store Configuration</span>
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          <span>{saving ? "Saving Configuration..." : "Save Store Configuration"}</span>
         </button>
       </form>
     </div>

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { X, Image as ImageIcon, Check, Smartphone, Monitor } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { X, Image as ImageIcon, Check, Smartphone, Monitor, Upload, Loader2 } from "lucide-react";
 import type { HeroBannerRecord } from "../../../types/admin.ts";
+import { uploadImageFile } from "../../../lib/upload-service.ts";
 
 interface BannerFormModalProps {
   open: boolean;
@@ -23,6 +24,26 @@ export const BannerFormModal: React.FC<BannerFormModalProps> = ({
   const [placement, setPlacement] = useState<HeroBannerRecord["placement"]>("HERO_MAIN");
   const [active, setActive] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const handleBannerFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    const result = await uploadImageFile(file, "banners");
+    setIsUploading(false);
+
+    if (result.error || !result.url) {
+      setUploadError(result.error || "Failed to upload banner.");
+    } else {
+      setImageUrl(result.url);
+    }
+  };
 
   useEffect(() => {
     if (banner) {
@@ -184,13 +205,56 @@ export const BannerFormModal: React.FC<BannerFormModalProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
-              Image Asset Path
+              Banner Photograph / Artwork Asset
+            </label>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/jpg"
+              onChange={handleBannerFileUpload}
+              className="hidden"
+            />
+
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2 mb-2 ${
+                isUploading
+                  ? "border-[#8B6D43] bg-[#8B6D43]/5"
+                  : "border-[#D2C2AD] hover:border-[#8B6D43] hover:bg-[#FAF9F6] bg-white"
+              }`}
+            >
+              {isUploading ? (
+                <div className="flex flex-col items-center gap-1.5 py-1">
+                  <Loader2 className="h-6 w-6 text-[#8B6D43] animate-spin" />
+                  <span className="text-xs font-semibold text-[#8B6D43]">
+                    Uploading banner image to cloud storage...
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-[#8B6D43]">
+                  <Upload className="h-4 w-4" />
+                  <span className="text-xs font-semibold text-[#2D2A26]">
+                    Click to upload banner file from device
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {uploadError && (
+              <div className="mb-2 p-2 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs">
+                {uploadError}
+              </div>
+            )}
+
+            <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1">
+              Or Direct Asset Path / URL
             </label>
             <input
               type="text"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="/img-2.webp or /image.webp"
+              placeholder="/img-2.webp or https://..."
               className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
             />
           </div>

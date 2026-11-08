@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   X,
   Package,
@@ -7,9 +7,13 @@ import {
   IndianRupee,
   Layers,
   Sparkles,
+  Upload,
+  ImageIcon,
+  Loader2,
 } from "lucide-react";
 import type { ExtendedProduct } from "../../../types/admin.ts";
 import { getStoredAdminCategories } from "../../../features/admin/store/admin-store.ts";
+import { uploadImageFile } from "../../../lib/upload-service.ts";
 
 interface ProductFormDialogProps {
   open: boolean;
@@ -45,6 +49,32 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
   const [badge, setBadge] = useState("");
   const [description, setDescription] = useState("");
   const [note, setNote] = useState("");
+
+  // Real Image Upload states
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadError(null);
+    setUploadSuccess(false);
+
+    const result = await uploadImageFile(file, "products");
+    setIsUploading(false);
+
+    if (result.error || !result.url) {
+      setUploadError(result.error || "Failed to upload image.");
+    } else {
+      setImage(result.url);
+      setUploadSuccess(true);
+      setTimeout(() => setUploadSuccess(false), 3000);
+    }
+  };
 
   useEffect(() => {
     if (product) {
@@ -366,16 +396,76 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
 
           {activeTab === "media" && (
             <div className="space-y-4">
+              {/* Real Cloud Image Uploader */}
               <div>
                 <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
-                  Product Image URL / Asset Path *
+                  Product Photograph / Formulation Asset
+                </label>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/jpg"
+                  onChange={handleImageFileChange}
+                  className="hidden"
+                />
+
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`border-2 border-dashed rounded-2xl p-5 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
+                    isUploading
+                      ? "border-[#8B6D43] bg-[#8B6D43]/5"
+                      : "border-[#D2C2AD] hover:border-[#8B6D43] hover:bg-[#FAF9F6] bg-white"
+                  }`}
+                >
+                  {isUploading ? (
+                    <div className="flex flex-col items-center gap-2 py-2">
+                      <Loader2 className="h-7 w-7 text-[#8B6D43] animate-spin" />
+                      <span className="text-xs font-semibold text-[#8B6D43]">
+                        Uploading to Supabase Storage...
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="h-10 w-10 rounded-full bg-[#FAF6F0] border border-[#E8E1D5] flex items-center justify-center text-[#8B6D43]">
+                        <Upload className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-semibold text-[#2D2A26] block">
+                          Click to upload product image from computer
+                        </span>
+                        <span className="text-[11px] text-[#2D2A26]/50">
+                          PNG, JPG, or WebP up to 10MB • Auto-syncs to cloud CDN
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {uploadError && (
+                  <div className="mt-2 p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-medium">
+                    {uploadError}
+                  </div>
+                )}
+
+                {uploadSuccess && (
+                  <div className="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs font-medium flex items-center gap-1.5">
+                    <Check className="h-4 w-4" />
+                    <span>Image successfully uploaded and bound to formulation!</span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
+                  Direct Asset URL or Path
                 </label>
                 <input
                   type="text"
                   required
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
-                  placeholder="/products/herbal-shampoo/main.webp"
+                  placeholder="/products/herbal-shampoo/main.webp or https://..."
                   className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
                 />
               </div>
@@ -413,14 +503,14 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                   <img
                     src={image}
                     alt="Preview"
-                    className="h-14 w-14 object-cover rounded-lg bg-white border border-[#D2C2AD]/40"
+                    className="h-16 w-16 object-cover rounded-lg bg-white border border-[#D2C2AD]/40 shadow-xs"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.webp";
                     }}
                   />
-                  <div>
-                    <span className="text-xs font-semibold text-[#2D2A26]">Asset Preview</span>
-                    <span className="text-[11px] text-[#8B6D43] block font-mono">{image}</span>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs font-semibold text-[#2D2A26] block">Active Visual Asset</span>
+                    <span className="text-[11px] text-[#8B6D43] truncate block font-mono">{image}</span>
                   </div>
                 </div>
               )}

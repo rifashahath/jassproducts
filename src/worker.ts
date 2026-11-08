@@ -36,12 +36,13 @@ function jsonResponse(data: any, status = 200) {
 
 export default {
   async fetch(request: Request, env: Env, ctx: any): Promise<Response> {
-    const url = new URL(request.url);
+    try {
+      const url = new URL(request.url);
 
-    // Handle CORS preflight
-    if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: CORS_HEADERS });
-    }
+      // Handle CORS preflight
+      if (request.method === "OPTIONS") {
+        return new Response(null, { status: 204, headers: CORS_HEADERS });
+      }
 
     // 1. Admin product endpoint
     if (url.pathname === "/api/admin-product") {
@@ -113,6 +114,195 @@ export default {
         }
 
         return jsonResponse({ success: true, deletedId: id }, 200);
+      }
+    }
+
+    // 2. Image Upload endpoint (Supabase Storage)
+    if (url.pathname === "/api/upload-image" && request.method === "POST") {
+      try {
+        const supabase = getSupabase(env);
+        const contentTypeHeader = request.headers.get("content-type") || "";
+
+        let fileBuffer: ArrayBuffer | Uint8Array;
+        let fileName = `img_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+        let mimeType = "image/jpeg";
+        let bucket = "products";
+
+        if (contentTypeHeader.includes("application/json")) {
+          const body: any = await request.json();
+          if (!body || !body.base64) {
+            return jsonResponse({ error: "Missing 'base64' string in payload." }, 400);
+          }
+          bucket = body.bucket || "products";
+          mimeType = body.contentType || "image/jpeg";
+          if (body.filename) {
+            const ext = body.filename.split(".").pop() || "jpg";
+            fileName = `${body.filename.replace(/[^a-zA-Z0-9_-]/g, "_")}_${Date.now()}.${ext}`;
+          } else {
+            const ext = mimeType.split("/")[1] || "jpg";
+            fileName = `${fileName}.${ext}`;
+          }
+
+          const rawBase64 = body.base64.replace(/^data:[^;]+;base64,/, "");
+          const binaryStr = atob(rawBase64);
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) {
+            bytes[i] = binaryStr.charCodeAt(i);
+          }
+          fileBuffer = bytes;
+        } else if (contentTypeHeader.includes("multipart/form-data")) {
+          const formData = await request.formData();
+          const file = formData.get("file") as File;
+          if (!file) {
+            return jsonResponse({ error: "No file found in form data." }, 400);
+          }
+          bucket = (formData.get("bucket") as string) || "products";
+          mimeType = file.type || "image/jpeg";
+          const ext = file.name ? file.name.split(".").pop() : (mimeType.split("/")[1] || "jpg");
+          fileName = `${fileName}.${ext}`;
+          fileBuffer = await file.arrayBuffer();
+        } else {
+          return jsonResponse({ error: "Content-Type must be multipart/form-data or application/json" }, 400);
+        }
+
+        const { data, error } = await supabase.storage.from(bucket).upload(fileName, fileBuffer, {
+          contentType: mimeType,
+          upsert: true,
+        });
+
+        if (error) {
+          return jsonResponse({ error: error.message }, 500);
+        }
+
+        const { data: pubData } = supabase.storage.from(bucket).getPublicUrl(fileName);
+
+        return jsonResponse({
+          success: true,
+          url: pubData.publicUrl,
+          path: data.path,
+          bucket,
+        }, 200);
+      } catch (uploadErr: any) {
+        return jsonResponse({ error: uploadErr?.message || "Upload failed." }, 500);
+      }
+    }
+
+    // 3. Admin Store Settings endpoint
+    if (url.pathname === "/api/admin-settings") {
+      const supabase = getSupabase(env);
+      if (request.method === "GET") {
+        try {
+          const { data, error } = await supabase.storage.from("images").download("site-settings.json");
+          if (!error && data) {
+            const text = await data.text();
+            return jsonResponse(JSON.parse(text), 200);
+          }
+        } catch {}
+        return jsonResponse({
+          storeName: "JASS PRODUCTS",
+          currency: "INR (₹)",
+          gstin: "29AABCJ1984K1Z4",
+          supportEmail: "apothecary@jassproducts.com",
+          supportPhone: "070922 03886 / 97151 63119",
+          address: "Dispensary 1: Near Noor Sait Primary School, Karumbukkadai | Dispensary 2: 13B Bright Avenue, Kuniyamuthur, Coimbatore, Tamil Nadu 641008"
+        }, 200);
+      }
+
+      if (request.method === "POST") {
+        try {
+          const payload = await request.json();
+          await supabase.storage.from("images").upload("site-settings.json", JSON.stringify(payload), {
+            contentType: "application/json",
+            upsert: true,
+          });
+          return jsonResponse({ success: true, settings: payload }, 200);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || "Failed to save settings." }, 500);
+        }
+      }
+    }
+
+    // 4. Admin Banners endpoint
+    if (url.pathname === "/api/admin-banners") {
+      const supabase = getSupabase(env);
+      if (request.method === "GET") {
+        try {
+          const { data, error } = await supabase.storage.from("images").download("site-banners.json");
+          if (!error && data) {
+            const text = await data.text();
+            return jsonResponse(JSON.parse(text), 200);
+          }
+        } catch {}
+        return jsonResponse([], 200);
+      }
+
+      if (request.method === "POST") {
+        try {
+          const payload = await request.json();
+          await supabase.storage.from("images").upload("site-banners.json", JSON.stringify(payload), {
+            contentType: "application/json",
+            upsert: true,
+          });
+          return jsonResponse({ success: true, banners: payload }, 200);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || "Failed to save banners." }, 500);
+        }
+      }
+    }
+
+    // 5. Admin Live Customers endpoint
+    if (url.pathname === "/api/admin-customers" && request.method === "GET") {
+      try {
+        const supabase = getSupabase(env);
+        const { data: profiles } = await supabase.from("profiles").select("*");
+        const { data: orders } = await supabase.from("orders").select("customer_name, customer_email, phone, total_amount, created_at");
+
+        const customerMap = new Map<string, any>();
+
+        if (Array.isArray(profiles)) {
+          profiles.forEach((p) => {
+            if (p.email) {
+              customerMap.set(p.email.toLowerCase(), {
+                id: p.id,
+                name: p.full_name || p.name || p.email.split("@")[0],
+                email: p.email,
+                phone: p.phone || "—",
+                ordersCount: 0,
+                totalSpent: 0,
+                tier: p.role === "SUPER_ADMIN" ? "VIP" : "Standard",
+                status: "ACTIVE",
+                joinedDate: p.created_at ? new Date(p.created_at).toISOString().split("T")[0] : "2026-09-01",
+              });
+            }
+          });
+        }
+
+        if (Array.isArray(orders)) {
+          orders.forEach((o) => {
+            const email = (o.customer_email || "").toLowerCase();
+            if (email) {
+              const existing = customerMap.get(email) || {
+                id: `cust-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
+                name: o.customer_name || email.split("@")[0],
+                email,
+                phone: o.phone || "—",
+                ordersCount: 0,
+                totalSpent: 0,
+                tier: "Standard",
+                status: "ACTIVE",
+                joinedDate: o.created_at ? new Date(o.created_at).toISOString().split("T")[0] : "2026-09-01",
+              };
+              existing.ordersCount += 1;
+              existing.totalSpent += Number(o.total_amount || 0);
+              if (existing.totalSpent > 1000) existing.tier = "VIP";
+              customerMap.set(email, existing);
+            }
+          });
+        }
+
+        return jsonResponse(Array.from(customerMap.values()), 200);
+      } catch (err: any) {
+        return jsonResponse([], 200);
       }
     }
 
@@ -256,6 +446,24 @@ export default {
     }
 
     // Default: Serve frontend static assets from ./dist
-    return env.ASSETS.fetch(request);
+    try {
+      if (!env.ASSETS) {
+        return new Response("env.ASSETS binding is not configured", { status: 500 });
+      }
+      return await env.ASSETS.fetch(request);
+    } catch (err: any) {
+      console.error("Asset fetch failed:", err);
+      return new Response(`Asset fetch error: ${err?.message || String(err)}\nStack: ${err?.stack || ""}`, {
+        status: 500,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
+    } catch (topErr: any) {
+      console.error("Top-level worker error:", topErr);
+      return new Response(`Worker Exception: ${topErr?.message || String(topErr)}\nStack: ${topErr?.stack || ""}`, {
+        status: 500,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
   },
 };

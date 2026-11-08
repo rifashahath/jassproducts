@@ -1183,6 +1183,22 @@ export function getStoredAdminCustomers(): CustomerRecord[] {
   return getStored(KEYS.CUSTOMERS, generateSeedCustomers);
 }
 
+export async function fetchAdminCustomers(): Promise<CustomerRecord[]> {
+  try {
+    const res = await fetch("/api/admin-customers");
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        saveStoredAdminCustomers(data);
+        return data;
+      }
+    }
+  } catch (err) {
+    console.warn("fetchAdminCustomers error:", err);
+  }
+  return getStoredAdminCustomers();
+}
+
 export function saveStoredAdminCustomers(customers: CustomerRecord[]) {
   setStored(KEYS.CUSTOMERS, customers, "customers_updated");
 }
@@ -1248,8 +1264,32 @@ export function getStoredAdminBanners(): HeroBannerRecord[] {
   return getStored(KEYS.BANNERS, generateSeedBanners);
 }
 
+export async function fetchAdminBanners(): Promise<HeroBannerRecord[]> {
+  try {
+    const res = await fetch("/api/admin-banners");
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        saveStoredAdminBanners(data);
+        return data;
+      }
+    }
+  } catch (err) {
+    console.warn("fetchAdminBanners error:", err);
+  }
+  return getStoredAdminBanners();
+}
+
 export function saveStoredAdminBanners(banners: HeroBannerRecord[]) {
   setStored(KEYS.BANNERS, banners, "banners_updated");
+  // Sync to Cloud Storage asynchronously
+  try {
+    fetch("/api/admin-banners", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(banners),
+    }).catch(() => {});
+  } catch {}
 }
 
 // 9. REVIEWS
@@ -1331,11 +1371,12 @@ export function getStoredSecurityLogs(): SecurityAuditLog[] {
 
 export function logSecurityEvent(action: string, details: string, severity: SecurityAuditLog["severity"] = "INFO", user: string = "Admin Console") {
   const list = getStoredSecurityLogs();
+  const clientHost = typeof window !== "undefined" ? window.location.hostname : "127.0.0.1";
   const newEntry: SecurityAuditLog = {
     id: `sec-${Date.now()}`,
     action,
     user,
-    ipAddress: "103.21.144.12",
+    ipAddress: clientHost === "localhost" ? "127.0.0.1 (Local)" : "Console Session",
     severity,
     details,
     timestamp: new Date().toISOString(),

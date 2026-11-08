@@ -3,6 +3,7 @@ import { Users, Eye, Lock, Unlock, Mail, Phone, ShieldCheck } from "lucide-react
 import { DataTable, type ColumnDef } from "../common/DataTable.tsx";
 import {
   getStoredAdminCustomers,
+  fetchAdminCustomers,
   toggleCustomerBlock,
 } from "../../../features/admin/store/admin-store.ts";
 import type { CustomerRecord } from "../../../types/admin.ts";
@@ -15,8 +16,12 @@ export const CustomersView: React.FC<CustomersViewProps> = ({ onSelectCustomer }
   const [customers, setCustomers] = useState<CustomerRecord[]>([]);
   const [tierFilter, setTierFilter] = useState<string>("ALL");
 
-  const loadData = () => {
+  const loadData = async () => {
     setCustomers(getStoredAdminCustomers());
+    const live = await fetchAdminCustomers();
+    if (live && live.length > 0) {
+      setCustomers(live);
+    }
   };
 
   useEffect(() => {

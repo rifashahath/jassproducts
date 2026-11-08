@@ -1,5 +1,5 @@
 import React, { useState, type ReactNode } from "react";
-import { ShieldAlert, ArrowLeft, LogIn, Lock, Sparkles, Loader2 } from "lucide-react";
+import { ShieldAlert, ArrowLeft, LogIn, Lock, Sparkles, Loader2, Eye, EyeOff } from "lucide-react";
 import { AdminSidebar } from "./AdminSidebar.tsx";
 import { AdminHeader } from "./AdminHeader.tsx";
 import { GlobalSearchDialog } from "../common/GlobalSearchDialog.tsx";
@@ -32,36 +32,11 @@ interface AdminLayoutProps {
  * the console reads (`orders`, `products`, `profiles`), which admit admin rows
  * only when public.is_admin() is true for the caller's session.
  */
-export const AdminLayout: React.FC<AdminLayoutProps> = ({
-  currentSubpath,
-  onNavigate,
-  children,
-  onQuickAddProduct,
-  onQuickStockAdjust,
-}) => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
-
-  const { user, isAdmin, loading } = useAuth();
-
-  // While the session is being restored, render nothing admin-shaped so no
-  // console content flashes before authentication resolves.
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center">
-        <div className="text-xs uppercase tracking-widest text-[#8B6D43] font-semibold animate-pulse">
-          Verifying credentials…
-        </div>
-      </div>
-    );
-  }
-
 function AdminSignInCard({ onNavigate }: { onNavigate: (path: string) => void }) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState("dr.jass@jassproducts.com");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -108,11 +83,17 @@ function AdminSignInCard({ onNavigate }: { onNavigate: (path: string) => void })
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1">
+            <label
+              htmlFor="admin-email-input"
+              className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1"
+            >
               Admin Email
             </label>
             <input
+              id="admin-email-input"
+              name="email"
               type="email"
+              autoComplete="username"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -122,17 +103,33 @@ function AdminSignInCard({ onNavigate }: { onNavigate: (path: string) => void })
           </div>
 
           <div>
-            <label className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1">
+            <label
+              htmlFor="admin-password-input"
+              className="block text-[11px] uppercase font-semibold tracking-wider text-neutral-700 mb-1"
+            >
               Password
             </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-4 py-2.5 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-[#8b6d43] text-sm text-[#2D2A26]"
-            />
+            <div className="relative">
+              <input
+                id="admin-password-input"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full px-4 py-2.5 pr-11 rounded-xl border border-neutral-300 bg-white focus:outline-none focus:border-[#8b6d43] text-sm text-[#2D2A26]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-[#8b6d43] transition-colors p-1 cursor-pointer"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           <button
@@ -171,6 +168,32 @@ function AdminSignInCard({ onNavigate }: { onNavigate: (path: string) => void })
     </div>
   );
 }
+
+export const AdminLayout: React.FC<AdminLayoutProps> = ({
+  currentSubpath,
+  onNavigate,
+  children,
+  onQuickAddProduct,
+  onQuickStockAdjust,
+}) => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  const { user, isAdmin, loading } = useAuth();
+
+  // While the session is being restored, render nothing admin-shaped so no
+  // console content flashes before authentication resolves.
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center">
+        <div className="text-xs uppercase tracking-widest text-[#8B6D43] font-semibold animate-pulse">
+          Verifying credentials…
+        </div>
+      </div>
+    );
+  }
 
   // No session at all → render inline admin sign-in form
   if (!user) {

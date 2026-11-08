@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { X, Layers, Check } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { X, Layers, Check, Upload, Loader2 } from "lucide-react";
 import type { CategoryItem } from "../../../types/admin.ts";
+import { uploadImageFile } from "../../../lib/upload-service.ts";
 
 interface CategoryFormDialogProps {
   open: boolean;
@@ -21,6 +22,26 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
   const [image, setImage] = useState("/products/herbal-shampoo/main.webp");
   const [displayOrder, setDisplayOrder] = useState<number>(1);
   const [status, setStatus] = useState<CategoryItem["status"]>("ACTIVE");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const handleCategoryFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    const result = await uploadImageFile(file, "images");
+    setIsUploading(false);
+
+    if (result.error || !result.url) {
+      setUploadError(result.error || "Failed to upload category image.");
+    } else {
+      setImage(result.url);
+    }
+  };
 
   useEffect(() => {
     if (categoryItem) {
@@ -151,13 +172,56 @@ export const CategoryFormDialog: React.FC<CategoryFormDialogProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
-              Featured Image URL
+              Category Photograph / Visual Cover
+            </label>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/jpg"
+              onChange={handleCategoryFileUpload}
+              className="hidden"
+            />
+
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-1.5 mb-2 ${
+                isUploading
+                  ? "border-[#8B6D43] bg-[#8B6D43]/5"
+                  : "border-[#D2C2AD] hover:border-[#8B6D43] hover:bg-[#FAF9F6] bg-white"
+              }`}
+            >
+              {isUploading ? (
+                <div className="flex flex-col items-center gap-1.5 py-1">
+                  <Loader2 className="h-6 w-6 text-[#8B6D43] animate-spin" />
+                  <span className="text-xs font-semibold text-[#8B6D43]">
+                    Uploading category photo...
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-[#8B6D43]">
+                  <Upload className="h-4 w-4" />
+                  <span className="text-xs font-semibold text-[#2D2A26]">
+                    Click to upload category picture from computer
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {uploadError && (
+              <div className="mb-2 p-2 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs">
+                {uploadError}
+              </div>
+            )}
+
+            <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1">
+              Or Image Asset URL / Path
             </label>
             <input
               type="text"
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              placeholder="/products/herbal-shampoo/main.webp"
+              placeholder="/products/herbal-shampoo/main.webp or https://..."
               className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
             />
           </div>

@@ -1,7 +1,17 @@
 import openpyxl, json, urllib.request, os
 
-SUPABASE_URL = 'https://duxjhmhgiacmuuqzfjxs.supabase.co'
-SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1eGpobWhnaWFjbXV1cXpmanhzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODU5NTA4NywiZXhwIjoyMTA0MTcxMDg3fQ._X4hT06eNEhvFWA7y7TmFH23dZX1Tw-1QSW3znsPBeo'
+SUPABASE_URL = os.environ.get('VITE_SUPABASE_URL', 'https://duxjhmhgiacmuuqzfjxs.supabase.co')
+SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '')
+
+# Attempt to load from .env if not set in environment
+if not SERVICE_KEY and os.path.exists('.env'):
+    with open('.env') as f:
+        for line in f:
+            if line.startswith('SUPABASE_SERVICE_ROLE_KEY='):
+                SERVICE_KEY = line.strip().split('=', 1)[1].strip()
+
+if not SERVICE_KEY:
+    raise RuntimeError("SUPABASE_SERVICE_ROLE_KEY is required to sync catalog to Supabase.")
 COST_EXCEL_PATH = '/home/intellact/Downloads/Jass_Cost_Price_Updated1.xlsx'
 SEO_EXCEL_PATH = '/home/intellact/Downloads/Jass_Products_Descriptions_SEO.xlsx'
 

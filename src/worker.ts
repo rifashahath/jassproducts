@@ -12,12 +12,13 @@ interface Env {
 }
 
 const DEFAULT_SUPABASE_URL = "https://duxjhmhgiacmuuqzfjxs.supabase.co";
-const DEFAULT_SERVICE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1eGpobWhnaWFjbXV1cXpmanhzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODU5NTA4NywiZXhwIjoyMTA0MTcxMDg3fQ._X4hT06eNEhvFWA7y7TmFH23dZX1Tw-1QSW3znsPBeo";
 
 function getSupabase(env: Env) {
   const url = env.VITE_SUPABASE_URL || env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
-  const key = env.SUPABASE_SERVICE_ROLE_KEY || DEFAULT_SERVICE_KEY;
+  const key = env.SUPABASE_SERVICE_ROLE_KEY || "";
+  if (!key) {
+    console.warn("CRITICAL: SUPABASE_SERVICE_ROLE_KEY secret binding is missing in Cloudflare Worker environment.");
+  }
   return createClient(url, key, { auth: { persistSession: false } });
 }
 

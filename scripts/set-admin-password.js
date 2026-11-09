@@ -8,9 +8,13 @@
 
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = "https://duxjhmhgiacmuuqzfjxs.supabase.co";
-const SERVICE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1eGpobWhnaWFjbXV1cXpmanhzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODU5NTA4NywiZXhwIjoyMTA0MTcxMDg3fQ._X4hT06eNEhvFWA7y7TmFH23dZX1Tw-1QSW3znsPBeo";
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "https://duxjhmhgiacmuuqzfjxs.supabase.co";
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+
+if (!SERVICE_KEY) {
+  console.error("Error: SUPABASE_SERVICE_ROLE_KEY environment variable is missing.");
+  process.exit(1);
+}
 
 const email = process.argv[2] || "dr.jass@jassproducts.com";
 const password = process.argv[3];

@@ -1,7 +1,7 @@
 /**
  * Product Data Model & Catalog Configuration for Jass Products.
  * Single source of truth for beauty, skincare, health, and hair care items.
- * Sourced directly from Jass_Products_Descriptions_SEO.xlsx catalog.
+ * Sourced directly from Jass_Cost_Price_Updated1.xlsx & Jass_Products_Descriptions_SEO.xlsx catalog.
  */
 
 import { supabase, isSupabaseConfigured } from "./supabase.ts";
@@ -15,6 +15,8 @@ export type Product = {
   price: number;
   mrp?: number;
   salePrice?: number;
+  costPrice?: number;
+  gstRate?: number;
   rating?: number;
   reviewsCount?: number;
   image: string;
@@ -62,6 +64,8 @@ export const products: Product[] = [
     "price": 99.0,
     "mrp": 149.0,
     "salePrice": 99.0,
+    "costPrice": 58.4,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 28,
     "image": "/products/beetroot-lip-balm/main.webp",
@@ -79,7 +83,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Natural Tint",
-    "volume": "15 G",
+    "volume": "10 G",
     "swatchCode": "1915 C"
   },
   {
@@ -91,6 +95,8 @@ export const products: Product[] = [
     "price": 99.0,
     "mrp": 149.0,
     "salePrice": 99.0,
+    "costPrice": 59.2,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 31,
     "image": "/products/strawberry-lip-balm/main.webp",
@@ -108,7 +114,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Natural Tint",
-    "volume": "15 G",
+    "volume": "10 G",
     "swatchCode": "1915 C"
   },
   {
@@ -120,6 +126,8 @@ export const products: Product[] = [
     "price": 125.0,
     "mrp": 200.0,
     "salePrice": 125.0,
+    "costPrice": 42.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 34,
     "image": "/products/saffron-gel/main.webp",
@@ -137,7 +145,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "100 G",
+    "volume": "40 G",
     "swatchCode": "1235 C"
   },
   {
@@ -149,6 +157,8 @@ export const products: Product[] = [
     "price": 125.0,
     "mrp": 200.0,
     "salePrice": 125.0,
+    "costPrice": 48.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 37,
     "image": "/products/tan-removal-cream/main.webp",
@@ -166,7 +176,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "50 G",
+    "volume": "40 G",
     "swatchCode": "1235 C"
   },
   {
@@ -178,6 +188,8 @@ export const products: Product[] = [
     "price": 165.0,
     "mrp": 250.0,
     "salePrice": 165.0,
+    "costPrice": 42.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 40,
     "image": "/products/night-cream/main.webp",
@@ -195,7 +207,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "50 G",
+    "volume": "40 G",
     "swatchCode": "1235 C"
   },
   {
@@ -207,6 +219,8 @@ export const products: Product[] = [
     "price": 155.0,
     "mrp": 220.0,
     "salePrice": 155.0,
+    "costPrice": 48.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 43,
     "image": "/products/kumkumadi-cream/main.webp",
@@ -224,7 +238,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "50 G",
+    "volume": "40 G",
     "swatchCode": "1235 C"
   },
   {
@@ -236,6 +250,8 @@ export const products: Product[] = [
     "price": 175.0,
     "mrp": 250.0,
     "salePrice": 175.0,
+    "costPrice": 40.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 46,
     "image": "/products/vitamin-c-cream/main.webp",
@@ -253,7 +269,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "50 G",
+    "volume": "40 G",
     "swatchCode": "1235 C"
   },
   {
@@ -265,6 +281,8 @@ export const products: Product[] = [
     "price": 195.0,
     "mrp": 350.0,
     "salePrice": 195.0,
+    "costPrice": 66.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 49,
     "image": "/products/goat-milk-face-wash/main.webp",
@@ -282,7 +300,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "150 ML",
+    "volume": "100 ML",
     "swatchCode": "1235 C"
   },
   {
@@ -294,6 +312,8 @@ export const products: Product[] = [
     "price": 225.0,
     "mrp": 350.0,
     "salePrice": 225.0,
+    "costPrice": 106.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 52,
     "image": "/products/sunscreen/main.webp",
@@ -311,7 +331,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "100 ML",
+    "volume": "40 G",
     "swatchCode": "1235 C"
   },
   {
@@ -323,6 +343,8 @@ export const products: Product[] = [
     "price": 299.0,
     "mrp": 350.0,
     "salePrice": 299.0,
+    "costPrice": 101.5,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 55,
     "image": "/products/pigmentation-serum/main.webp",
@@ -352,6 +374,8 @@ export const products: Product[] = [
     "price": 330.0,
     "mrp": 400.0,
     "salePrice": 330.0,
+    "costPrice": 128.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 58,
     "image": "/products/anti-aging-cream/main.webp",
@@ -369,7 +393,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Botanical Actives",
-    "volume": "50 G",
+    "volume": "40 G",
     "swatchCode": "1235 C"
   },
   {
@@ -381,6 +405,8 @@ export const products: Product[] = [
     "price": 295.0,
     "mrp": 400.0,
     "salePrice": 295.0,
+    "costPrice": 119.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 61,
     "image": "/products/silky-shine-shampoo/main.webp",
@@ -410,6 +436,8 @@ export const products: Product[] = [
     "price": 295.0,
     "mrp": 400.0,
     "salePrice": 295.0,
+    "costPrice": 119.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 64,
     "image": "/products/anti-dandruff-shampoo/main.webp",
@@ -439,6 +467,8 @@ export const products: Product[] = [
     "price": 200.0,
     "mrp": 250.0,
     "salePrice": 200.0,
+    "costPrice": 90.0,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 27,
     "image": "/products/hair-oil/main.webp",
@@ -456,7 +486,7 @@ export const products: Product[] = [
     "inStock": true,
     "stockQuantity": 60,
     "badge": "Ayurvedic Formula",
-    "volume": "100 ML",
+    "volume": "70 ML",
     "swatchCode": "7530 C"
   },
   {
@@ -465,9 +495,11 @@ export const products: Product[] = [
     "name": "Multani Mitti Soap",
     "slug": "multani-mitti-soap",
     "category": "HERBAL SOAPS",
-    "price": 85.0,
+    "price": 99.0,
     "mrp": 150.0,
-    "salePrice": 85.0,
+    "salePrice": 99.0,
+    "costPrice": 55.5,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 30,
     "image": "/products/multani-mitti-soap/main.webp",
@@ -494,9 +526,11 @@ export const products: Product[] = [
     "name": "Aloe Vera Soap",
     "slug": "aloe-vera-soap",
     "category": "HERBAL SOAPS",
-    "price": 85.0,
+    "price": 99.0,
     "mrp": 150.0,
-    "salePrice": 85.0,
+    "salePrice": 99.0,
+    "costPrice": 55.5,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 33,
     "image": "/products/aloe-vera-soap/main.webp",
@@ -523,9 +557,11 @@ export const products: Product[] = [
     "name": "Kuppaimeni Soap",
     "slug": "kuppaimeni-soap",
     "category": "HERBAL SOAPS",
-    "price": 100.0,
+    "price": 99.0,
     "mrp": 150.0,
-    "salePrice": 100.0,
+    "salePrice": 99.0,
+    "costPrice": 55.5,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 36,
     "image": "/products/kuppaimeni-soap/main.webp",
@@ -552,9 +588,11 @@ export const products: Product[] = [
     "name": "Beetroot Soap",
     "slug": "beetroot-soap",
     "category": "HERBAL SOAPS",
-    "price": 85.0,
+    "price": 99.0,
     "mrp": 150.0,
-    "salePrice": 85.0,
+    "salePrice": 99.0,
+    "costPrice": 55.5,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 39,
     "image": "/products/beetroot-soap/main.webp",
@@ -581,9 +619,11 @@ export const products: Product[] = [
     "name": "Goat Milk Soap",
     "slug": "goat-milk-soap",
     "category": "HERBAL SOAPS",
-    "price": 100.0,
+    "price": 99.0,
     "mrp": 150.0,
-    "salePrice": 100.0,
+    "salePrice": 99.0,
+    "costPrice": 55.5,
+    "gstRate": 18,
     "rating": 5.0,
     "reviewsCount": 42,
     "image": "/products/goat-milk-soap/main.webp",
@@ -613,6 +653,8 @@ export const products: Product[] = [
     "price": 100.0,
     "mrp": 150.0,
     "salePrice": 100.0,
+    "costPrice": 55.5,
+    "gstRate": 5,
     "rating": 5.0,
     "reviewsCount": 45,
     "image": "/products/moringa-powder/main.webp",
@@ -642,6 +684,8 @@ export const products: Product[] = [
     "price": 100.0,
     "mrp": 150.0,
     "salePrice": 100.0,
+    "costPrice": 55.5,
+    "gstRate": 5,
     "rating": 5.0,
     "reviewsCount": 48,
     "image": "/products/beetroot-powder/main.webp",
@@ -671,6 +715,8 @@ export const products: Product[] = [
     "price": 100.0,
     "mrp": 150.0,
     "salePrice": 100.0,
+    "costPrice": 55.5,
+    "gstRate": 5,
     "rating": 5.0,
     "reviewsCount": 51,
     "image": "/products/amla-powder/main.webp",
@@ -700,6 +746,8 @@ export const products: Product[] = [
     "price": 100.0,
     "mrp": 150.0,
     "salePrice": 100.0,
+    "costPrice": 55.5,
+    "gstRate": 5,
     "rating": 5.0,
     "reviewsCount": 54,
     "image": "/products/carrot-powder/main.webp",
@@ -763,6 +811,8 @@ export async function fetchLiveProducts(category?: string): Promise<Product[]> {
         price: Number(row.price),
         mrp: extra.mrp || (row.sale_price ? Number(row.sale_price) : undefined),
         salePrice: row.sale_price ? Number(row.sale_price) : undefined,
+        costPrice: extra.costPrice,
+        gstRate: extra.gstRate,
         rating: row.rating ? Number(row.rating) : 5.0,
         reviewsCount: row.reviews_count || 0,
         image: toWebpPath(row.image),

@@ -40,6 +40,7 @@ function apiDevPlugin(): Plugin {
           'revalidate-cart',
           'cancel-order',
           'admin-product',
+          'upload-image',
         ];
         if (!validEndpoints.includes(endpoint)) {
           return next();

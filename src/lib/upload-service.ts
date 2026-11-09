@@ -80,3 +80,20 @@ export async function uploadImageFile(
     return { url: null, error: err?.message || "Network error uploading image." };
   }
 }
+
+export async function uploadMultipleImageFiles(
+  files: File[],
+  bucket: "products" | "banners" | "images" = "products",
+  onProgress?: (completed: number, total: number) => void
+): Promise<UploadResult[]> {
+  const results: UploadResult[] = [];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const res = await uploadImageFile(file, bucket);
+    results.push(res);
+    if (onProgress) {
+      onProgress(i + 1, files.length);
+    }
+  }
+  return results;
+}

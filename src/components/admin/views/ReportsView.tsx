@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   BarChart3,
   TrendingUp,
@@ -50,7 +50,7 @@ export const ReportsView: React.FC = () => {
     });
   }, [orders, timePeriod]);
 
-  const totalSales = filteredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const totalSales = filteredOrders.reduce((sum: number, o: AdminOrderRecord) => sum + (o.total || 0), 0);
   const totalOrders = filteredOrders.length;
   const estimatedTax = Math.round(totalSales * 0.18);
   const avgBasket = totalOrders > 0 ? Math.round(totalSales / totalOrders) : 0;
@@ -59,10 +59,10 @@ export const ReportsView: React.FC = () => {
   const performanceData: ProductPerformanceRow[] = useMemo(() => {
     return products.map((p) => {
       let unitsSold = 0;
-      filteredOrders.forEach((o) => {
-        o.items.forEach((item) => {
-          if (String(item.id) === String(p.id) || item.name.toLowerCase() === p.name.toLowerCase()) {
-            unitsSold += item.quantity;
+      filteredOrders.forEach((o: AdminOrderRecord) => {
+        (o.items || []).forEach((item: any) => {
+          if (String(item.id) === String(p.id) || (item.name && item.name.toLowerCase() === p.name.toLowerCase())) {
+            unitsSold += item.quantity || 1;
           }
         });
       });

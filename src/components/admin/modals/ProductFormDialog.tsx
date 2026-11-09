@@ -10,6 +10,11 @@ import {
   Upload,
   ImageIcon,
   Loader2,
+  Trash2,
+  Star,
+  Eye,
+  Plus,
+  ImagePlus,
 } from "lucide-react";
 import type { ExtendedProduct } from "../../../types/admin.ts";
 import { getStoredAdminCategories } from "../../../features/admin/store/admin-store.ts";
@@ -44,6 +49,9 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
   const [stockQuantity, setStockQuantity] = useState<number>(50);
   const [minStockThreshold, setMinStockThreshold] = useState<number>(15);
   const [image, setImage] = useState("/products/herbal-shampoo/main.webp");
+  const [hoverImage, setHoverImage] = useState<string>("");
+  const [gallery, setGallery] = useState<string[]>([]);
+  const [newImageUrl, setNewImageUrl] = useState("");
   const [volume, setVolume] = useState("250 ML");
   const [swatchCode, setSwatchCode] = useState("334 U");
   const [badge, setBadge] = useState("");
@@ -56,28 +64,120 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
 
   // Real Image Upload states
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const multiFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgressText, setUploadProgressText] = useState("");
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
   const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
+    setUploadProgressText(`Uploading cover photo: ${file.name}...`);
     setUploadError(null);
-    setUploadSuccess(false);
+    setUploadSuccess(null);
 
     const result = await uploadImageFile(file, "products");
     setIsUploading(false);
+    setUploadProgressText("");
 
     if (result.error || !result.url) {
       setUploadError(result.error || "Failed to upload image.");
     } else {
-      setImage(result.url);
-      setUploadSuccess(true);
-      setTimeout(() => setUploadSuccess(false), 3000);
+      const newUrl = result.url;
+      setImage(newUrl);
+      setGallery((prev) => {
+        const withoutNew = prev.filter((u) => u !== newUrl);
+        return [newUrl, ...withoutNew];
+      });
+      setUploadSuccess("Cover photo updated and added to gallery!");
+      setTimeout(() => setUploadSuccess(null), 3000);
     }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleMultipleImageFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    setUploadError(null);
+    setUploadSuccess(null);
+
+    const uploadedUrls: string[] = [];
+    const errors: string[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      setUploadProgressText(`Uploading photo ${i + 1} of ${files.length}: ${file.name}...`);
+      const res = await uploadImageFile(file, "products");
+      if (res.url) {
+        uploadedUrls.push(res.url);
+      } else if (res.error) {
+        errors.push(`${file.name}: ${res.error}`);
+      }
+    }
+
+    setIsUploading(false);
+    setUploadProgressText("");
+
+    if (uploadedUrls.length > 0) {
+      setGallery((prev) => {
+        const combined = [...prev, ...uploadedUrls];
+        return combined.filter((v, idx, arr) => arr.indexOf(v) === idx);
+      });
+      // If image is default placeholder, set first uploaded as cover
+      if (!image || image.includes("herbal-shampoo/main.webp") || image.includes("amla-powder/main.webp")) {
+        setImage(uploadedUrls[0]);
+      }
+      setUploadSuccess(`Successfully uploaded ${uploadedUrls.length} photo${uploadedUrls.length > 1 ? "s" : ""} to product gallery!`);
+      setTimeout(() => setUploadSuccess(null), 4000);
+    }
+
+    if (errors.length > 0) {
+      setUploadError(errors.join(" | "));
+    }
+
+    if (multiFileInputRef.current) {
+      multiFileInputRef.current.value = "";
+    }
+  };
+
+  const handleMakeCover = (url: string) => {
+    setImage(url);
+    setGallery((prev) => [url, ...prev.filter((u) => u !== url)]);
+  };
+
+  const handleSetHover = (url: string) => {
+    setHoverImage(url);
+  };
+
+  const handleRemovePhoto = (urlToRemove: string) => {
+    setGallery((prev) => {
+      const filtered = prev.filter((u) => u !== urlToRemove);
+      if (image === urlToRemove) {
+        setImage(filtered[0] || "");
+      }
+      if (hoverImage === urlToRemove) {
+        setHoverImage(filtered[1] || filtered[0] || "");
+      }
+      return filtered;
+    });
+  };
+
+  const handleAddManualUrl = () => {
+    const trimmed = newImageUrl.trim();
+    if (!trimmed) return;
+    if (!gallery.includes(trimmed)) {
+      setGallery((prev) => [...prev, trimmed]);
+      if (!image) setImage(trimmed);
+    }
+    setNewImageUrl("");
   };
 
   useEffect(() => {
@@ -91,7 +191,13 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setGstRate(product.gstRate || 18);
       setStockQuantity(product.stockQuantity || 50);
       setMinStockThreshold(product.minStockThreshold || 15);
-      setImage(product.image || "/products/herbal-shampoo/main.webp");
+      const cover = product.image || "/products/herbal-shampoo/main.webp";
+      setImage(cover);
+      setHoverImage(product.hoverImage || "");
+      const initGallery = Array.isArray(product.gallery) && product.gallery.length > 0
+        ? product.gallery
+        : [cover];
+      setGallery(initGallery.filter(Boolean));
       setVolume(product.volume || "250 ML");
       setSwatchCode(product.swatchCode || "334 U");
       setBadge(product.badge || "");
@@ -101,6 +207,9 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setSeoDescription(product.seoDescription || "");
       setSeoKeywords(product.seoKeywords || "");
       setImageAlt((product as any).imageAlt || "");
+      setNewImageUrl("");
+      setUploadError(null);
+      setUploadSuccess(null);
     } else {
       setName("");
       setSku(`JP-BOT-${Math.floor(100 + Math.random() * 900)}`);
@@ -112,6 +221,8 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setStockQuantity(60);
       setMinStockThreshold(15);
       setImage("/products/herbal-shampoo/main.webp");
+      setHoverImage("");
+      setGallery(["/products/herbal-shampoo/main.webp"]);
       setVolume("250 ML");
       setSwatchCode("334 U");
       setBadge("");
@@ -121,6 +232,9 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setSeoDescription("");
       setSeoKeywords("");
       setImageAlt("");
+      setNewImageUrl("");
+      setUploadError(null);
+      setUploadSuccess(null);
     }
   }, [product, open]);
 
@@ -128,6 +242,13 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanGallery = gallery.filter(Boolean);
+    const primaryCover = image || cleanGallery[0] || "/products/amla-powder/main.webp";
+    const primaryHover = hoverImage || cleanGallery[1] || primaryCover;
+    const finalGallery = cleanGallery.length > 0
+      ? (cleanGallery.includes(primaryCover) ? cleanGallery : [primaryCover, ...cleanGallery])
+      : [primaryCover];
+
     onSave({
       id: product?.id,
       name,
@@ -139,7 +260,9 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       gstRate: Number(gstRate),
       stockQuantity: Number(stockQuantity),
       minStockThreshold: Number(minStockThreshold),
-      image,
+      image: primaryCover,
+      hoverImage: primaryHover,
+      gallery: finalGallery,
       volume,
       swatchCode,
       badge: badge || undefined,
@@ -412,13 +535,29 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
           )}
 
           {activeTab === "media" && (
-            <div className="space-y-4">
-              {/* Real Cloud Image Uploader */}
+            <div className="space-y-5">
+              {/* Cloud Multiple Image Uploader */}
               <div>
-                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
-                  Product Photograph / Formulation Asset
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider">
+                    Upload Product Photographs ({gallery.length} Photos)
+                  </label>
+                  <span className="text-[11px] text-[#8B6D43] font-medium">
+                    Upload multiple angles, texture, packaging & swatch
+                  </span>
+                </div>
                 
+                {/* Hidden Multi-file input */}
+                <input
+                  ref={multiFileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/png,image/jpeg,image/webp,image/jpg"
+                  onChange={handleMultipleImageFilesChange}
+                  className="hidden"
+                />
+
+                {/* Hidden Single Cover File Input */}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -428,31 +567,39 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                 />
 
                 <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-2xl p-5 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
+                  onClick={() => multiFileInputRef.current?.click()}
+                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-2.5 ${
                     isUploading
                       ? "border-[#8B6D43] bg-[#8B6D43]/5"
-                      : "border-[#D2C2AD] hover:border-[#8B6D43] hover:bg-[#FAF9F6] bg-white"
+                      : "border-[#D2C2AD] hover:border-[#8B6D43] hover:bg-[#FAF9F6] bg-white shadow-xs"
                   }`}
                 >
                   {isUploading ? (
-                    <div className="flex flex-col items-center gap-2 py-2">
-                      <Loader2 className="h-7 w-7 text-[#8B6D43] animate-spin" />
+                    <div className="flex flex-col items-center gap-2 py-3">
+                      <Loader2 className="h-8 w-8 text-[#8B6D43] animate-spin" />
                       <span className="text-xs font-semibold text-[#8B6D43]">
-                        Uploading to Supabase Storage...
+                        {uploadProgressText || "Uploading photos to Cloud CDN..."}
+                      </span>
+                      <span className="text-[10px] text-[#2D2A26]/50">
+                        Synchronizing with Supabase Storage
                       </span>
                     </div>
                   ) : (
                     <>
-                      <div className="h-10 w-10 rounded-full bg-[#FAF6F0] border border-[#E8E1D5] flex items-center justify-center text-[#8B6D43]">
-                        <Upload className="h-5 w-5" />
+                      <div className="h-12 w-12 rounded-full bg-[#FAF6F0] border border-[#E8E1D5] flex items-center justify-center text-[#8B6D43] shadow-xs">
+                        <ImagePlus className="h-6 w-6" />
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-[#2D2A26] block">
-                          Click to upload product image from computer
+                        <span className="text-xs font-bold text-[#2D2A26] block">
+                          Click to select & upload product photos (supports multiple images)
                         </span>
-                        <span className="text-[11px] text-[#2D2A26]/50">
-                          PNG, JPG, or WebP up to 10MB • Auto-syncs to cloud CDN
+                        <span className="text-[11px] text-[#2D2A26]/60">
+                          PNG, JPG, or WebP up to 10MB each • Fast cloud CDN hosting
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="px-2.5 py-1 rounded-full bg-[#F4EFE6] text-[#8B6D43] text-[10px] font-semibold">
+                          + Select Multiple Photos
                         </span>
                       </div>
                     </>
@@ -460,33 +607,187 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                 </div>
 
                 {uploadError && (
-                  <div className="mt-2 p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-medium">
-                    {uploadError}
+                  <div className="mt-2.5 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-medium flex items-center gap-2">
+                    <X className="h-4 w-4 shrink-0 text-rose-600" />
+                    <span>{uploadError}</span>
                   </div>
                 )}
 
                 {uploadSuccess && (
-                  <div className="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs font-medium flex items-center gap-1.5">
-                    <Check className="h-4 w-4" />
-                    <span>Image successfully uploaded and bound to formulation!</span>
+                  <div className="mt-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs font-medium flex items-center gap-2">
+                    <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+                    <span>{uploadSuccess}</span>
                   </div>
                 )}
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
-                  Direct Asset URL or Path
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  placeholder="/products/herbal-shampoo/main.webp or https://..."
-                  className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
-                />
+              {/* Add Photo by URL */}
+              <div className="p-3.5 bg-white border border-[#E8E1D5] rounded-2xl space-y-2">
+                <span className="text-xs font-semibold text-[#2D2A26] uppercase tracking-wider block">
+                  Add Photo by URL
+                </span>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddManualUrl();
+                      }
+                    }}
+                    placeholder="https://example.com/photo.webp or /products/..."
+                    className="flex-1 px-3.5 py-2 bg-[#FAF9F6] border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddManualUrl}
+                    disabled={!newImageUrl.trim()}
+                    className="px-3.5 py-2 bg-[#8B6D43] text-white rounded-xl text-xs font-semibold hover:bg-[#725835] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Add to Gallery</span>
+                  </button>
+                </div>
               </div>
 
+              {/* Product Gallery Grid */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-semibold text-[#2D2A26] uppercase tracking-wider block">
+                    Product Photo Gallery ({gallery.length})
+                  </label>
+                  <span className="text-[10px] text-[#2D2A26]/50">
+                    Customers can browse all photos on product detail page
+                  </span>
+                </div>
+
+                {gallery.length === 0 ? (
+                  <div className="p-6 bg-white border border-dashed border-[#D2C2AD] rounded-xl text-center text-xs text-[#2D2A26]/60">
+                    No photos in gallery yet. Click above to upload photos.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {gallery.map((imgUrl, idx) => {
+                      const isCover = imgUrl === image || (!image && idx === 0);
+                      const isHover = imgUrl === hoverImage || (!hoverImage && idx === 1);
+
+                      return (
+                        <div
+                          key={`${imgUrl}-${idx}`}
+                          className={`relative group bg-white border rounded-xl overflow-hidden p-2 transition-all flex flex-col justify-between ${
+                            isCover
+                              ? "border-[#8B6D43] ring-2 ring-[#8B6D43]/20 shadow-xs"
+                              : "border-[#E8E1D5] hover:border-[#D2C2AD]"
+                          }`}
+                        >
+                          <div className="aspect-square w-full rounded-lg bg-[#FAF8F5] overflow-hidden relative flex items-center justify-center border border-[#E8E1D5]/60 mb-2">
+                            <img
+                              src={imgUrl}
+                              alt={`Product photo ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.webp";
+                              }}
+                            />
+                            {/* Status Badges */}
+                            <div className="absolute top-1.5 left-1.5 flex flex-col gap-1">
+                              {isCover && (
+                                <span className="px-2 py-0.5 rounded-full bg-[#8B6D43] text-white text-[9px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-xs">
+                                  <Star className="h-2.5 w-2.5 fill-white" />
+                                  Cover
+                                </span>
+                              )}
+                              {isHover && !isCover && (
+                                <span className="px-2 py-0.5 rounded-full bg-emerald-700 text-white text-[9px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-xs">
+                                  <Eye className="h-2.5 w-2.5" />
+                                  Hover
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <span className="text-[10px] text-[#2D2A26]/60 font-mono truncate block" title={imgUrl}>
+                              {imgUrl.split("/").pop()}
+                            </span>
+
+                            <div className="flex items-center gap-1 pt-1 border-t border-[#F0EBE1]">
+                              {!isCover && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleMakeCover(imgUrl)}
+                                  className="flex-1 py-1 px-1.5 bg-[#F4EFE6] hover:bg-[#8B6D43] hover:text-white text-[#8B6D43] rounded-lg text-[10px] font-semibold transition-colors flex items-center justify-center gap-1"
+                                  title="Set as primary product photo"
+                                >
+                                  <Star className="h-3 w-3" />
+                                  <span>Cover</span>
+                                </button>
+                              )}
+                              {!isHover && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleSetHover(imgUrl)}
+                                  className="py-1 px-1.5 bg-[#FAF8F5] hover:bg-emerald-50 text-emerald-800 rounded-lg text-[10px] font-semibold transition-colors flex items-center justify-center gap-1"
+                                  title="Set as card hover photo"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Hover</span>
+                                </button>
+                              )}
+                              {gallery.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemovePhoto(imgUrl)}
+                                  className="p-1 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors ml-auto"
+                                  title="Remove photo from gallery"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Direct Primary Cover Asset URL */}
+              <div>
+                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
+                  Primary Cover Photo URL
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    value={image}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setImage(val);
+                      if (val && !gallery.includes(val)) {
+                        setGallery((prev) => [val, ...prev]);
+                      }
+                    }}
+                    placeholder="/products/herbal-shampoo/main.webp or https://..."
+                    className="flex-1 px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3.5 py-2.5 bg-[#F4EFE6] border border-[#D2C2AD] hover:bg-[#EAE2D5] text-[#8B6D43] text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 shrink-0"
+                    title="Upload single cover replacement"
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    <span>Upload Cover</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Volume / Net Weight & Swatch Code */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
@@ -496,7 +797,7 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                     type="text"
                     value={volume}
                     onChange={(e) => setVolume(e.target.value)}
-                    placeholder="e.g. 250 ML or 100 G"
+                    placeholder="e.g. 40 G, 100 ML, 70 ML, 10 G"
                     className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
                   />
                 </div>
@@ -514,23 +815,6 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                   />
                 </div>
               </div>
-
-              {image && (
-                <div className="p-3 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl flex items-center gap-3">
-                  <img
-                    src={image}
-                    alt="Preview"
-                    className="h-16 w-16 object-cover rounded-lg bg-white border border-[#D2C2AD]/40 shadow-xs"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/products/herbal-shampoo/main.webp";
-                    }}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <span className="text-xs font-semibold text-[#2D2A26] block">Active Visual Asset</span>
-                    <span className="text-[11px] text-[#8B6D43] truncate block font-mono">{image}</span>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 

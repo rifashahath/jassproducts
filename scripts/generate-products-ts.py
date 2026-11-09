@@ -1,10 +1,50 @@
 import openpyxl, json
 
-EXCEL_PATH = '/home/intellact/Downloads/Jass_Products_Descriptions_SEO.xlsx'
-wb = openpyxl.load_workbook(EXCEL_PATH)
-sheet = wb.active
-rows = list(sheet.iter_rows(values_only=True))
-headers = rows[0]
+COST_EXCEL_PATH = '/home/intellact/Downloads/Jass_Cost_Price_Updated1.xlsx'
+SEO_EXCEL_PATH = '/home/intellact/Downloads/Jass_Products_Descriptions_SEO.xlsx'
+
+# 1. Parse Cost & Price Excel
+wb_cost = openpyxl.load_workbook(COST_EXCEL_PATH, data_only=True)
+sheet_cost = wb_cost.active
+cost_map = {}
+for r in range(8, 31):
+    name = str(sheet_cost.cell(row=r, column=1).value).strip()
+    size = sheet_cost.cell(row=r, column=2).value
+    unit = sheet_cost.cell(row=r, column=3).value
+    cost = float(sheet_cost.cell(row=r, column=4).value)
+    offer = float(sheet_cost.cell(row=r, column=5).value)
+    mrp = float(sheet_cost.cell(row=r, column=6).value)
+    gst = sheet_cost.cell(row=r, column=7).value
+    
+    vol_str = f'{size} {unit.upper()}'
+    if str(size).upper().endswith(unit.upper()):
+        vol_str = str(size).upper()
+        if ' ' not in vol_str:
+            vol_str = vol_str[:-len(unit)] + ' ' + unit.upper()
+
+    gst_rate = 18
+    if gst == 0.05 or gst == '0.05':
+        gst_rate = 5
+    elif gst == 0.18 or gst == '0.18' or '18%' in str(gst):
+        gst_rate = 18
+
+    cost_map[name] = {
+        'name': name,
+        'volume': vol_str,
+        'cost': cost,
+        'offer': offer,
+        'mrp': mrp,
+        'gstRate': gst_rate
+    }
+
+alias_map = {
+    'Silky Shine Shampoo': 'Shampoo',
+    'Goat Milk Face Wash': 'Face Wash',
+    'Sunscreen Lotion SPF 50++': 'Sunscreen 50+++',
+    'Anti Aging Cream': 'Anti-Aging Cream',
+    'Night Moisturiser': 'Night Moisturizer',
+    'Anti Dandruff Shampoo': 'Anti-Dandruff Shampoo',
+}
 
 slug_image_map = {
     'beetroot-lip-balm': ('/products/beetroot-lip-balm/main.webp', '/products/herbal-lip-balm/gallery-1.webp'),
@@ -40,32 +80,6 @@ category_badge_map = {
     'Herbal Powders': '100% Pure & Organic',
 }
 
-volume_map = {
-    'beetroot-lip-balm': '15 G',
-    'strawberry-lip-balm': '15 G',
-    'saffron-gel': '100 G',
-    'tan-removal-cream': '50 G',
-    'night-moisturiser': '50 G',
-    'kumkumadi-cream': '50 G',
-    'vitamin-c-cream': '50 G',
-    'goat-milk-face-wash': '150 ML',
-    'sunscreen-lotion-spf-50': '100 ML',
-    'pigmentation-serum': '30 ML',
-    'anti-aging-cream': '50 G',
-    'silky-shine-shampoo': '200 ML',
-    'anti-dandruff-shampoo': '200 ML',
-    'hair-oil': '100 ML',
-    'multani-mitti-soap': '100 G',
-    'aloe-vera-soap': '100 G',
-    'kuppaimeni-soap': '100 G',
-    'beetroot-soap': '100 G',
-    'goat-milk-soap': '100 G',
-    'moringa-leaf-powder': '100 G',
-    'beetroot-powder': '100 G',
-    'amla-powder': '100 G',
-    'carrot-powder': '100 G',
-}
-
 swatch_map = {
     'Lip Care': '1915 C',
     'Face & Skin Care': '1235 C',
@@ -74,14 +88,17 @@ swatch_map = {
     'Herbal Powders': '334 U',
 }
 
+wb_seo = openpyxl.load_workbook(SEO_EXCEL_PATH, data_only=True)
+sheet_seo = wb_seo.active
+rows_seo = list(sheet_seo.iter_rows(values_only=True))
+headers = rows_seo[0]
+
 ts_products = []
-for r in rows[1:]:
+for r in rows_seo[1:]:
     if any(r):
         num = int(r[headers.index('No')])
         name = str(r[headers.index('Product Name')]).strip()
         cat = str(r[headers.index('Category')]).strip()
-        offer = float(r[headers.index('Offer Price (₹)')])
-        mrp = float(r[headers.index('MRP (₹)')])
         desc = str(r[headers.index('Product Description')]).strip()
         seo_title = str(r[headers.index('SEO Title')]).strip()
         meta_desc = str(r[headers.index('Meta Description')]).strip()
@@ -89,8 +106,16 @@ for r in rows[1:]:
         keywords = str(r[headers.index('Keywords')]).strip()
         alt = str(r[headers.index('Image Alt Text')]).strip()
 
+        cost_key = alias_map.get(name, name)
+        cinfo = cost_map[cost_key]
+
+        offer = cinfo['offer']
+        mrp = cinfo['mrp']
+        cost = cinfo['cost']
+        vol = cinfo['volume']
+        gst_rate = cinfo['gstRate']
+
         imgs = slug_image_map.get(slug, ('/products/amla-powder/main.webp', '/products/amla-powder/main.webp'))
-        vol = volume_map.get(slug, '100 G')
         badge = category_badge_map.get(cat, 'Ayurvedic')
         swatch = swatch_map.get(cat, '334 U')
 
@@ -103,6 +128,8 @@ for r in rows[1:]:
             'price': offer,
             'mrp': mrp,
             'salePrice': offer,
+            'costPrice': cost,
+            'gstRate': gst_rate,
             'rating': 5.0,
             'reviewsCount': 25 + (num * 3) % 40,
             'image': imgs[0],
@@ -125,7 +152,7 @@ for r in rows[1:]:
 header_code = """/**
  * Product Data Model & Catalog Configuration for Jass Products.
  * Single source of truth for beauty, skincare, health, and hair care items.
- * Sourced directly from Jass_Products_Descriptions_SEO.xlsx catalog.
+ * Sourced directly from Jass_Cost_Price_Updated1.xlsx & Jass_Products_Descriptions_SEO.xlsx catalog.
  */
 
 import { supabase, isSupabaseConfigured } from "./supabase.ts";
@@ -139,6 +166,8 @@ export type Product = {
   price: number;
   mrp?: number;
   salePrice?: number;
+  costPrice?: number;
+  gstRate?: number;
   rating?: number;
   reviewsCount?: number;
   image: string;
@@ -221,6 +250,8 @@ export async function fetchLiveProducts(category?: string): Promise<Product[]> {
         price: Number(row.price),
         mrp: extra.mrp || (row.sale_price ? Number(row.sale_price) : undefined),
         salePrice: row.sale_price ? Number(row.sale_price) : undefined,
+        costPrice: extra.costPrice,
+        gstRate: extra.gstRate,
         rating: row.rating ? Number(row.rating) : 5.0,
         reviewsCount: row.reviews_count || 0,
         image: toWebpPath(row.image),

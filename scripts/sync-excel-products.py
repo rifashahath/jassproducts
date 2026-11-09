@@ -2,7 +2,51 @@ import openpyxl, json, urllib.request, os
 
 SUPABASE_URL = 'https://duxjhmhgiacmuuqzfjxs.supabase.co'
 SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1eGpobWhnaWFjbXV1cXpmanhzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODU5NTA4NywiZXhwIjoyMTA0MTcxMDg3fQ._X4hT06eNEhvFWA7y7TmFH23dZX1Tw-1QSW3znsPBeo'
-EXCEL_PATH = '/home/intellact/Downloads/Jass_Products_Descriptions_SEO.xlsx'
+COST_EXCEL_PATH = '/home/intellact/Downloads/Jass_Cost_Price_Updated1.xlsx'
+SEO_EXCEL_PATH = '/home/intellact/Downloads/Jass_Products_Descriptions_SEO.xlsx'
+
+# 1. Parse Cost & Price Excel
+wb_cost = openpyxl.load_workbook(COST_EXCEL_PATH, data_only=True)
+sheet_cost = wb_cost.active
+cost_map = {}
+for r in range(8, 31):
+    name = str(sheet_cost.cell(row=r, column=1).value).strip()
+    size = sheet_cost.cell(row=r, column=2).value
+    unit = sheet_cost.cell(row=r, column=3).value
+    cost = float(sheet_cost.cell(row=r, column=4).value)
+    offer = float(sheet_cost.cell(row=r, column=5).value)
+    mrp = float(sheet_cost.cell(row=r, column=6).value)
+    gst = sheet_cost.cell(row=r, column=7).value
+    
+    vol_str = f'{size} {unit.upper()}'
+    if str(size).upper().endswith(unit.upper()):
+        vol_str = str(size).upper()
+        if ' ' not in vol_str:
+            vol_str = vol_str[:-len(unit)] + ' ' + unit.upper()
+
+    gst_rate = 18
+    if gst == 0.05 or gst == '0.05':
+        gst_rate = 5
+    elif gst == 0.18 or gst == '0.18' or '18%' in str(gst):
+        gst_rate = 18
+
+    cost_map[name] = {
+        'name': name,
+        'volume': vol_str,
+        'cost': cost,
+        'offer': offer,
+        'mrp': mrp,
+        'gstRate': gst_rate
+    }
+
+alias_map = {
+    'Silky Shine Shampoo': 'Shampoo',
+    'Goat Milk Face Wash': 'Face Wash',
+    'Sunscreen Lotion SPF 50++': 'Sunscreen 50+++',
+    'Anti Aging Cream': 'Anti-Aging Cream',
+    'Night Moisturiser': 'Night Moisturizer',
+    'Anti Dandruff Shampoo': 'Anti-Dandruff Shampoo',
+}
 
 slug_image_map = {
     'beetroot-lip-balm': ('/products/beetroot-lip-balm/main.webp', '/products/herbal-lip-balm/gallery-1.webp'),
@@ -38,47 +82,31 @@ category_badge_map = {
     'Herbal Powders': '100% Pure & Organic',
 }
 
-volume_map = {
-    'beetroot-lip-balm': '15 G',
-    'strawberry-lip-balm': '15 G',
-    'saffron-gel': '100 G',
-    'tan-removal-cream': '50 G',
-    'night-moisturiser': '50 G',
-    'kumkumadi-cream': '50 G',
-    'vitamin-c-cream': '50 G',
-    'goat-milk-face-wash': '150 ML',
-    'sunscreen-lotion-spf-50': '100 ML',
-    'pigmentation-serum': '30 ML',
-    'anti-aging-cream': '50 G',
-    'silky-shine-shampoo': '200 ML',
-    'anti-dandruff-shampoo': '200 ML',
-    'hair-oil': '100 ML',
-    'multani-mitti-soap': '100 G',
-    'aloe-vera-soap': '100 G',
-    'kuppaimeni-soap': '100 G',
-    'beetroot-soap': '100 G',
-    'goat-milk-soap': '100 G',
-    'moringa-leaf-powder': '100 G',
-    'beetroot-powder': '100 G',
-    'amla-powder': '100 G',
-    'carrot-powder': '100 G',
-}
+# Fetch existing DB products to preserve user uploaded images & galleries
+existing_db = {}
+try:
+    req_existing = urllib.request.Request(
+        f'{SUPABASE_URL}/rest/v1/products?select=id,image,hover_image,gallery',
+        headers={'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
+    )
+    with urllib.request.urlopen(req_existing) as resp:
+        for p in json.loads(resp.read().decode()):
+            existing_db[p['id']] = p
+except Exception as e:
+    print('Notice: Could not pre-fetch existing products:', e)
 
-wb = openpyxl.load_workbook(EXCEL_PATH)
-sheet = wb.active
-rows = list(sheet.iter_rows(values_only=True))
-headers = rows[0]
+# 2. Parse SEO Excel
+wb_seo = openpyxl.load_workbook(SEO_EXCEL_PATH, data_only=True)
+sheet_seo = wb_seo.active
+rows_seo = list(sheet_seo.iter_rows(values_only=True))
+headers = rows_seo[0]
 
-products_list = []
 db_rows = []
-
-for r in rows[1:]:
+for r in rows_seo[1:]:
     if any(r):
         num = int(r[headers.index('No')])
         name = str(r[headers.index('Product Name')]).strip()
         cat = str(r[headers.index('Category')]).strip()
-        offer = float(r[headers.index('Offer Price (₹)')])
-        mrp = float(r[headers.index('MRP (₹)')])
         desc = str(r[headers.index('Product Description')]).strip()
         seo_title = str(r[headers.index('SEO Title')]).strip()
         meta_desc = str(r[headers.index('Meta Description')]).strip()
@@ -86,9 +114,28 @@ for r in rows[1:]:
         keywords = str(r[headers.index('Keywords')]).strip()
         alt = str(r[headers.index('Image Alt Text')]).strip()
 
-        imgs = slug_image_map.get(slug, ('/products/amla-powder/main.webp', '/products/amla-powder/main.webp'))
-        vol = volume_map.get(slug, '100 G')
+        cost_key = alias_map.get(name, name)
+        cinfo = cost_map[cost_key]
+
+        offer = cinfo['offer']
+        mrp = cinfo['mrp']
+        cost = cinfo['cost']
+        vol = cinfo['volume']
+        gst_rate = cinfo['gstRate']
+
+        fallback_imgs = slug_image_map.get(slug, ('/products/amla-powder/main.webp', '/products/amla-powder/main.webp'))
         badge = category_badge_map.get(cat, 'Ayurvedic')
+
+        pid = f'jp-{num}'
+        existing_item = existing_db.get(pid, {})
+        current_img = existing_item.get('image') or fallback_imgs[0]
+        current_hover = existing_item.get('hover_image') or fallback_imgs[1]
+        
+        # Merge gallery safely
+        existing_gallery = existing_item.get('gallery') or []
+        merged_gallery = list(existing_gallery) if isinstance(existing_gallery, list) and existing_gallery else [fallback_imgs[0], fallback_imgs[1]]
+        if current_img not in merged_gallery:
+            merged_gallery.insert(0, current_img)
 
         note_data = json.dumps({
             'seoTitle': seo_title,
@@ -96,11 +143,13 @@ for r in rows[1:]:
             'seoKeywords': keywords,
             'imageAlt': alt,
             'mrp': mrp,
-            'volume': vol
+            'volume': vol,
+            'costPrice': cost,
+            'gstRate': gst_rate
         })
 
         db_row = {
-            'id': f'jp-{num}',
+            'id': pid,
             'name': name,
             'slug': slug,
             'category': cat.upper(),
@@ -108,9 +157,9 @@ for r in rows[1:]:
             'note': note_data,
             'price': offer,
             'sale_price': mrp,
-            'image': imgs[0],
-            'hover_image': imgs[1],
-            'gallery': [imgs[0], imgs[1]],
+            'image': current_img,
+            'hover_image': current_hover,
+            'gallery': merged_gallery,
             'badge': badge,
             'rating': 5.0,
             'reviews_count': 25 + (num * 3) % 40,
@@ -118,13 +167,12 @@ for r in rows[1:]:
             'in_stock': True,
             'is_featured': True,
             'is_active': True,
-            'updated_at': '2026-11-09T12:00:00.000Z'
+            'updated_at': '2026-11-09T18:00:00.000Z'
         }
         db_rows.append(db_row)
 
-print(f'Syncing {len(db_rows)} products to Supabase...')
+print(f'Syncing {len(db_rows)} updated products to Supabase...')
 
-# 1. Upsert all rows into Supabase products table
 req = urllib.request.Request(
     f'{SUPABASE_URL}/rest/v1/products',
     data=json.dumps(db_rows).encode(),
@@ -140,14 +188,14 @@ req = urllib.request.Request(
 with urllib.request.urlopen(req) as resp:
     print('Supabase products upsert status:', resp.status)
 
-# 2. Check total products now in Supabase
+# Verify
 req_verify = urllib.request.Request(
-    f'{SUPABASE_URL}/rest/v1/products?select=id,name,price,sale_price,category&order=id',
+    f'{SUPABASE_URL}/rest/v1/products?select=id,name,price,sale_price,category,note&order=id',
     headers={'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
 )
 with urllib.request.urlopen(req_verify) as resp:
     data = json.loads(resp.read().decode())
-    print(f'Total products in Supabase: {len(data)}')
+    print(f'Total products verified in Supabase: {len(data)}')
     for item in data:
-        print(f"  {item['id']}: {item['name']} ({item['category']}) - Offer: ₹{item['price']} | MRP: ₹{item['sale_price']}")
-
+        n = json.loads(item['note']) if item.get('note') else {}
+        print(f"  {item['id']}: {item['name']} ({item['category']}) - Offer: ₹{item['price']} | MRP: ₹{item['sale_price']} | Cost: ₹{n.get('costPrice')} | Vol: {n.get('volume')} | GST: {n.get('gstRate')}%")

@@ -3,9 +3,9 @@ import { ShoppingBag, Check } from 'lucide-react';
 import { Product } from '../lib/products';
 import { useCart } from '../context/CartContext';
 
-function toInr(rawPrice: number) {
+function toInr(rawPrice: number, mrpOverride?: number) {
   const inr = Math.round(rawPrice);
-  const mrp = Math.round(inr * 1.25);
+  const mrp = mrpOverride && mrpOverride > inr ? Math.round(mrpOverride) : Math.round(inr * 1.25);
   const discount = Math.round(((mrp - inr) / mrp) * 100);
   return {
     price: inr,
@@ -29,7 +29,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const { addToCart } = useCart();
   const [isAdded, setIsAdded] = useState(false);
-  const priceData = toInr(product.price);
+  const priceData = toInr(product.price, product.mrp);
 
   const hoverImg =
     product.hoverImage ||

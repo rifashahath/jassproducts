@@ -36,9 +36,9 @@ interface ReviewItem {
   verified: boolean;
 }
 
-function toInr(rawPrice: number) {
+function toInr(rawPrice: number, mrpOverride?: number) {
   const inr = Math.round(rawPrice);
-  const mrp = Math.round(inr * 1.25);
+  const mrp = mrpOverride && mrpOverride > inr ? Math.round(mrpOverride) : Math.round(inr * 1.25);
   return {
     price: inr,
     mrp,
@@ -166,7 +166,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
 
   if (!product) return null;
 
-  const p = toInr(product.price);
+  const p = toInr(product.price, product.mrp);
   const images = (product.gallery?.length ? product.gallery : [product.image]).filter((v, i, a) => a.indexOf(v) === i);
   const recommendations = defaultProducts
     .filter((x) => String(x.id) !== String(product.id))
@@ -265,7 +265,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
             <div className="aspect-square w-full rounded-3xl bg-gradient-to-b from-[#fdfbf9] to-[#f5f0e8] border border-[#e8e2d8]/80 p-8 sm:p-14 flex items-center justify-center relative overflow-hidden group shadow-xs">
               <img
                 src={selectedImage}
-                alt={product.name}
+                alt={product.imageAlt || product.name}
                 loading="eager"
                 decoding="async"
                 width="600"

@@ -45,6 +45,16 @@ export default {
       }
 
     // 1. Admin product endpoint
+    if (url.pathname === "/api/debug-env") {
+      return jsonResponse({
+        hasAssets: !!env.ASSETS,
+        keys: Object.keys(env),
+        host: url.host,
+        hostname: url.hostname,
+        url: request.url,
+      });
+    }
+
     if (url.pathname === "/api/admin-product") {
       const supabase = getSupabase(env);
 
@@ -70,13 +80,31 @@ export default {
           const salePrice = body.salePrice !== undefined ? Number(body.salePrice) : (body.sale_price !== undefined ? Number(body.sale_price) : undefined);
           const stock = body.stockQuantity !== undefined ? Number(body.stockQuantity) : (body.stock !== undefined ? Number(body.stock) : 50);
 
+          let noteValue = body.note || "";
+          if (body.seoTitle || body.seoDescription || body.seoKeywords || body.imageAlt || body.mrp) {
+            let existingNoteObj: any = {};
+            try {
+              if (typeof noteValue === "string" && noteValue.trim().startsWith("{")) {
+                existingNoteObj = JSON.parse(noteValue);
+              }
+            } catch (e) {}
+            noteValue = JSON.stringify({
+              ...existingNoteObj,
+              seoTitle: body.seoTitle ?? existingNoteObj.seoTitle,
+              seoDescription: body.seoDescription ?? existingNoteObj.seoDescription,
+              seoKeywords: body.seoKeywords ?? existingNoteObj.seoKeywords,
+              imageAlt: body.imageAlt ?? existingNoteObj.imageAlt,
+              mrp: body.mrp ?? existingNoteObj.mrp,
+            });
+          }
+
           const dbRow = {
             id,
             name,
             slug,
             category: (body.category || "HEALTH CARE").toUpperCase(),
             description: body.description || "",
-            note: body.note || "",
+            note: noteValue,
             price,
             sale_price: salePrice ?? null,
             stock,
@@ -492,16 +520,37 @@ export default {
 
     // Default: Serve frontend static assets from ./dist
     try {
-      if (!env.ASSETS) {
-        return new Response("env.ASSETS binding is not configured", { status: 500 });
+      if (env.ASSETS) {
+        let assetResp = await env.ASSETS.fetch(request);
+        if (assetResp.status < 400 || assetResp.status === 304) {
+          return assetResp;
+        }
+        const normUrl = new URL(url.pathname + url.search, "https://jassproducts.jass-products.workers.dev");
+        assetResp = await env.ASSETS.fetch(new Request(normUrl.toString(), request));
+        if (assetResp.status < 400 || assetResp.status === 304) {
+          return assetResp;
+        }
       }
-      return await env.ASSETS.fetch(request);
-    } catch (err: any) {
-      console.error("Asset fetch failed:", err);
-      return new Response(`Asset fetch error: ${err?.message || String(err)}\nStack: ${err?.stack || ""}`, {
-        status: 500,
-        headers: { "Content-Type": "text/plain" },
+
+      // External fetch fallback with clean headers
+      const fallbackUrl = new URL(url.pathname + url.search, "https://jassproducts.jass-products.workers.dev");
+      const fallbackHeaders = new Headers(request.headers);
+      fallbackHeaders.delete("host");
+      return await fetch(fallbackUrl.toString(), {
+        method: request.method,
+        headers: fallbackHeaders,
       });
+    } catch (err: any) {
+      console.warn("Primary asset fetch failed, attempting workers.dev fallback:", err);
+      try {
+        const fallbackUrl = new URL(url.pathname + url.search, "https://jassproducts.jass-products.workers.dev");
+        return await fetch(fallbackUrl.toString());
+      } catch (fallbackErr) {
+        return new Response(`Asset fetch error: ${err?.message || String(err)}`, {
+          status: 500,
+          headers: { "Content-Type": "text/plain" },
+        });
+      }
     }
     } catch (topErr: any) {
       console.error("Top-level worker error:", topErr);

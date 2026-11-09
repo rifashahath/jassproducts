@@ -222,9 +222,9 @@ function MainApp() {
     };
     const meta = product
       ? {
-          title: `${product.name} | Jass Products India`,
-          description: `${product.description} Shop ${product.name} from Jass Products in India.`,
-          path: `/product/${product.id}`,
+          title: product.seoTitle || `${product.name} | Jass Products India`,
+          description: product.seoDescription || `${product.description} Shop ${product.name} from Jass Products in India.`,
+          path: `/product/${product.slug || product.id}`,
         }
       : pageMeta[currentPage] || pageMeta.home;
 
@@ -238,6 +238,16 @@ function MainApp() {
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', `${window.location.origin}${meta.path}`);
     document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', meta.title);
     document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', meta.description);
+
+    if (product?.seoKeywords) {
+      let kwMeta = document.querySelector('meta[name="keywords"]');
+      if (!kwMeta) {
+        kwMeta = document.createElement('meta');
+        kwMeta.setAttribute('name', 'keywords');
+        document.head.appendChild(kwMeta);
+      }
+      kwMeta.setAttribute('content', product.seoKeywords);
+    }
   }, [currentPage, queryParams]);
 
   const navigateTo = (target: string, params: Record<string, string> = {}) => {

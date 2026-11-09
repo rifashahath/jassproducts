@@ -22,7 +22,7 @@ interface ProductFormDialogProps {
   onSave: (data: Partial<ExtendedProduct>) => void;
 }
 
-type TabKey = "basic" | "pricing" | "inventory" | "media" | "specs";
+type TabKey = "basic" | "pricing" | "inventory" | "media" | "seo" | "specs";
 
 export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
   open,
@@ -49,6 +49,10 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
   const [badge, setBadge] = useState("");
   const [description, setDescription] = useState("");
   const [note, setNote] = useState("");
+  const [seoTitle, setSeoTitle] = useState("");
+  const [seoDescription, setSeoDescription] = useState("");
+  const [seoKeywords, setSeoKeywords] = useState("");
+  const [imageAlt, setImageAlt] = useState("");
 
   // Real Image Upload states
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -93,6 +97,10 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setBadge(product.badge || "");
       setDescription(product.description || "");
       setNote(product.note || "");
+      setSeoTitle(product.seoTitle || "");
+      setSeoDescription(product.seoDescription || "");
+      setSeoKeywords(product.seoKeywords || "");
+      setImageAlt((product as any).imageAlt || "");
     } else {
       setName("");
       setSku(`JP-BOT-${Math.floor(100 + Math.random() * 900)}`);
@@ -109,6 +117,10 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       setBadge("");
       setDescription("");
       setNote("");
+      setSeoTitle("");
+      setSeoDescription("");
+      setSeoKeywords("");
+      setImageAlt("");
     }
   }, [product, open]);
 
@@ -133,9 +145,13 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
       badge: badge || undefined,
       description,
       note,
+      seoTitle,
+      seoDescription,
+      seoKeywords,
+      imageAlt,
       inStock: Number(stockQuantity) > 0,
       stockStatus: Number(stockQuantity) <= 0 ? "OUT_OF_STOCK" : Number(stockQuantity) <= Number(minStockThreshold) ? "LOW_STOCK" : "IN_STOCK",
-    });
+    } as any);
     onClose();
   };
 
@@ -182,6 +198,7 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
               { key: "pricing", label: "Pricing & GST" },
               { key: "inventory", label: "Inventory" },
               { key: "media", label: "Media & Packaging" },
+              { key: "seo", label: "SEO & Search" },
               { key: "specs", label: "Ayurvedic Ritual" },
             ] as const
           ).map((tab) => (
@@ -514,6 +531,62 @@ export const ProductFormDialog: React.FC<ProductFormDialogProps> = ({
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {activeTab === "seo" && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
+                  Page / Meta Title (SEO Title)
+                </label>
+                <input
+                  type="text"
+                  value={seoTitle}
+                  onChange={(e) => setSeoTitle(e.target.value)}
+                  placeholder="e.g. Beetroot Lip Balm – Natural Lip Care | Jass Products"
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
+                  Meta Description
+                </label>
+                <textarea
+                  rows={3}
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
+                  placeholder="e.g. Buy Beetroot Lip Balm online: natural lip balm for soft lips..."
+                  className="w-full px-3.5 py-2 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
+                  Target Search Keywords (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={seoKeywords}
+                  onChange={(e) => setSeoKeywords(e.target.value)}
+                  placeholder="e.g. beetroot lip balm, natural lip balm, pink lip balm"
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#2D2A26] uppercase tracking-wider mb-1.5">
+                  Image Alt Text (Screen Readers & Google Images)
+                </label>
+                <input
+                  type="text"
+                  value={imageAlt}
+                  onChange={(e) => setImageAlt(e.target.value)}
+                  placeholder="e.g. Jass Products Beetroot Lip Balm"
+                  className="w-full px-3.5 py-2.5 bg-white border border-[#D2C2AD]/80 rounded-xl text-xs text-[#2D2A26] focus:outline-none focus:border-[#8B6D43]"
+                />
+              </div>
             </div>
           )}
 

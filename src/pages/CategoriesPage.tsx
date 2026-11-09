@@ -19,7 +19,7 @@ export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate, init
   const catContainerRef = useRef<HTMLDivElement>(null);
 
   const availableCategories = useMemo(() => {
-    const list = ['All', 'Health Care', 'Hair Care', 'Skincare & Creams', 'Lip Care'];
+    const list = ['All', 'Lip Care', 'Face & Skin Care', 'Hair Care', 'Herbal Soaps', 'Herbal Powders'];
     productsList.forEach((p) => {
       if (p.category) {
         const normalized = p.category

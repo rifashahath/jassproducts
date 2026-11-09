@@ -100,44 +100,54 @@ function generateSeedProducts(): ExtendedProduct[] {
 function generateSeedCategories(): CategoryItem[] {
   return [
     {
-      id: "cat-health",
-      name: "HEALTH CARE",
-      slug: "health-care",
-      description: "100% pure organic herbal vitality powders including Amla, Beetroot, Carrot, and Moringa leaves for holistic wellness.",
-      image: "/products/amla-powder/main.webp",
+      id: "cat-lipcare",
+      name: "LIP CARE",
+      slug: "lip-care",
+      description: "Natural lip balms formulated with beetroot, strawberry, and nourishing botanical oils for soft, tinted lips.",
+      image: "/products/beetroot-lip-balm/main.webp",
       displayOrder: 1,
       status: "ACTIVE",
-      productCount: 4,
+      productCount: 2,
+    },
+    {
+      id: "cat-face-skin-care",
+      name: "FACE & SKIN CARE",
+      slug: "face-and-skin-care",
+      description: "Pure saffron radiance gel, night moisturiser, SPF 50 sunscreen, de-tan creams, and botanical face washes.",
+      image: "/products/saffron-gel/main.webp",
+      displayOrder: 2,
+      status: "ACTIVE",
+      productCount: 9,
     },
     {
       id: "cat-hair",
       name: "HAIR CARE",
       slug: "hair-care",
-      description: "Rosemary, neem, and shikakai formulations engineered for root clarifying, dandruff elimination, and lustrous softness.",
-      image: "/products/herbal-shampoo/main.webp",
-      displayOrder: 2,
-      status: "ACTIVE",
-      productCount: 1,
-    },
-    {
-      id: "cat-skincare",
-      name: "SKINCARE & CREAMS",
-      slug: "skincare-and-creams",
-      description: "High-potency botanical day and night creams, broad spectrum mineral sunscreen, peptide complexes, and saffron radiance gel.",
-      image: "/products/night-cream/main.webp",
+      description: "Ayurvedic anti-dandruff and silky shine shampoos paired with herbal hair oils for root-to-tip vitality.",
+      image: "/products/silky-shine-shampoo/main.webp",
       displayOrder: 3,
       status: "ACTIVE",
-      productCount: 6,
+      productCount: 3,
     },
     {
-      id: "cat-lipcare",
-      name: "LIP CARE",
-      slug: "lip-care",
-      description: "Organic beeswax, beetroot extract, and cold-pressed almond butter balm for deeply hydrated and naturally tinted lips.",
-      image: "/products/herbal-lip-balm/main.webp",
+      id: "cat-herbal-soaps",
+      name: "HERBAL SOAPS",
+      slug: "herbal-soaps",
+      description: "Handcrafted cold-process Ayurvedic bathing bars with Multani Mitti, Aloe Vera, Kuppaimeni, Beetroot, and Goat Milk.",
+      image: "/products/multani-mitti-soap/main.webp",
       displayOrder: 4,
       status: "ACTIVE",
-      productCount: 1,
+      productCount: 5,
+    },
+    {
+      id: "cat-herbal-powders",
+      name: "HERBAL POWDERS",
+      slug: "herbal-powders",
+      description: "100% shade-dried organic single-herb powders: Moringa leaf, Beetroot, Amla gooseberry, and Carrot powders.",
+      image: "/products/amla-powder/main.webp",
+      displayOrder: 5,
+      status: "ACTIVE",
+      productCount: 4,
     },
   ];
 }
@@ -818,6 +828,13 @@ export async function fetchAdminProducts(): Promise<ExtendedProduct[]> {
       if (!error && data && data.length > 0) {
         const mapped: ExtendedProduct[] = data.map((row: any) => {
           const existing = local.find((l) => String(l.id) === String(row.id));
+          let extra: any = {};
+          try {
+            if (row.note && typeof row.note === 'string' && row.note.trim().startsWith('{')) {
+              extra = JSON.parse(row.note);
+            }
+          } catch (e) {}
+
           return {
             id: row.id,
             sku: existing?.sku || `JP-${(row.category || "BOT").slice(0, 2).toUpperCase()}-${String(row.id).replace(/\D/g, "") || "101"}`,
@@ -828,6 +845,7 @@ export async function fetchAdminProducts(): Promise<ExtendedProduct[]> {
             subcategory: existing?.subcategory || row.category,
             brand: "Jass Products",
             price: Number(row.price),
+            mrp: extra.mrp || (row.sale_price ? Number(row.sale_price) : undefined),
             salePrice: row.sale_price ? Number(row.sale_price) : undefined,
             costPrice: existing?.costPrice || Math.round(Number(row.price) * 0.45),
             stockQuantity: row.stock ?? 50,
@@ -838,7 +856,11 @@ export async function fetchAdminProducts(): Promise<ExtendedProduct[]> {
             hoverImage: row.hover_image || row.image,
             gallery: Array.isArray(row.gallery) && row.gallery.length > 0 ? row.gallery : [row.image],
             description: row.description || "",
-            note: row.note || "",
+            note: extra.note || row.note || "",
+            seoTitle: extra.seoTitle || existing?.seoTitle,
+            seoDescription: extra.seoDescription || existing?.seoDescription,
+            seoKeywords: extra.seoKeywords || existing?.seoKeywords,
+            imageAlt: extra.imageAlt,
             rating: Number(row.rating) || 5.0,
             reviewsCount: row.reviews_count || 0,
             badge: row.badge || "",

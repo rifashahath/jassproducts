@@ -770,16 +770,33 @@ export const products: Product[] = [
   }
 ];
 
+function getLocalFallbackProducts(): Product[] {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("jass_admin_products_v1");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.filter((p: any) => p.status !== "DRAFT" && p.status !== "ARCHIVED");
+        }
+      }
+    } catch {}
+  }
+  return products;
+}
+
 /**
  * Loads products from Supabase database `public.products` table.
- * Falls back to static catalog if unconfigured or database is unreachable.
+ * Falls back to local admin cache or static catalog if unconfigured or database is unreachable.
  */
 export async function fetchLiveProducts(category?: string): Promise<Product[]> {
+  const fallbackList = getLocalFallbackProducts();
+
   if (!isSupabaseConfigured) {
     if (category && category.toUpperCase() !== "ALL") {
-      return products.filter((p) => p.category.toUpperCase().includes(category.toUpperCase()));
+      return fallbackList.filter((p) => p.category && p.category.toUpperCase().includes(category.toUpperCase()));
     }
-    return products;
+    return fallbackList;
   }
 
   try {
@@ -790,9 +807,9 @@ export async function fetchLiveProducts(category?: string): Promise<Product[]> {
     const { data, error } = await query;
     if (error || !data || data.length === 0) {
       if (category && category.toUpperCase() !== "ALL") {
-        return products.filter((p) => p.category.toUpperCase().includes(category.toUpperCase()));
+        return fallbackList.filter((p) => p.category && p.category.toUpperCase().includes(category.toUpperCase()));
       }
-      return products;
+      return fallbackList;
     }
 
     return data.map((row: any) => {
@@ -833,6 +850,6 @@ export async function fetchLiveProducts(category?: string): Promise<Product[]> {
       };
     });
   } catch (err) {
-    return products;
+    return fallbackList;
   }
 }

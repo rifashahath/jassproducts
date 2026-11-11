@@ -18,6 +18,7 @@ import { Product, fetchLiveProducts, products as defaultProducts } from '../lib/
 import { ProductCard } from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
 import { gsap, useGSAP } from '../lib/gsap';
+import { apiUrl } from '../lib/api-endpoints';
 
 interface ProductDetailPageProps {
   productId: string;
@@ -153,6 +154,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
           setProduct(liveFound);
           setSelectedImage(liveFound.image);
         }
+
+        // Fetch live reviews from Supabase / API
+        try {
+          const revRes = await fetch(`${apiUrl("admin-reviews")}?productId=${encodeURIComponent(String(productId))}`);
+          if (revRes.ok) {
+            const revData = await revRes.json();
+            if (active && Array.isArray(revData) && revData.length > 0) {
+              setReviews(revData);
+            }
+          }
+        } catch {}
       } catch (err) {
         console.warn('Could not load live product:', err);
       }
@@ -202,25 +214,45 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ productId,
     setHelpfulVoted((prev) => ({ ...prev, [id]: true }));
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rForm.author.trim() || !rForm.title.trim() || !rForm.content.trim()) return;
-    setReviews([
-      {
-        id: Date.now(),
-        author: rForm.author.trim(),
-        location: rForm.location.trim() || 'India',
-        rating: rForm.rating,
-        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-        title: rForm.title.trim(),
-        content: rForm.content.trim(),
-        helpfulCount: 0,
-        verified: true,
-      },
-      ...reviews,
-    ]);
+    const newRev: ReviewItem = {
+      id: Date.now(),
+      author: rForm.author.trim(),
+      location: rForm.location.trim() || 'India',
+      rating: rForm.rating,
+      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      title: rForm.title.trim(),
+      content: rForm.content.trim(),
+      helpfulCount: 0,
+      verified: true,
+    };
+    setReviews([newRev, ...reviews]);
     setRSuccess(true);
+    const submittedAuthor = rForm.author.trim();
+    const submittedRating = rForm.rating;
+    const submittedTitle = rForm.title.trim();
+    const submittedContent = rForm.content.trim();
     setRForm({ author: '', location: '', rating: 5, title: '', content: '' });
+
+    // Sync to backend reviews queue for admin review & persistence
+    try {
+      await fetch(apiUrl("admin-reviews"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          author: submittedAuthor,
+          rating: submittedRating,
+          title: submittedTitle,
+          content: submittedContent,
+        }),
+      });
+    } catch (err) {
+      console.warn("Could not submit review to backend:", err);
+    }
+
     setTimeout(() => {
       setRSuccess(false);
       setWriteOpen(false);

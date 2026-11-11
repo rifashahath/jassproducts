@@ -54,7 +54,7 @@ export async function onRequestPost(context: any) {
       gallery: Array.isArray(body.gallery) && body.gallery.length > 0 ? body.gallery : [body.image || "/products/amla-powder/main.webp"],
       rating: body.rating ? Number(body.rating) : 5.0,
       reviews_count: body.reviewsCount || body.reviews_count || 0,
-      is_active: body.status !== "ARCHIVED" && body.is_active !== false,
+      is_active: (body.status === "PUBLISHED" || (!body.status && body.is_active !== false)) && body.status !== "DRAFT" && body.status !== "ARCHIVED" && body.is_active !== false,
       updated_at: new Date().toISOString(),
     };
 

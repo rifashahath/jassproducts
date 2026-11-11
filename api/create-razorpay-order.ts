@@ -71,6 +71,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const supabase = getSupabaseClient();
+
+    // Enforce customer blocking check
+    if (supabase && (userEmail || userPhone)) {
+      try {
+        const { data: blockedRow } = await supabase
+          .from("store_settings")
+          .select("value")
+          .eq("key", "blocked_customers")
+          .maybeSingle();
+
+        if (blockedRow && Array.isArray(blockedRow.value)) {
+          const isBlocked = blockedRow.value.some((b: string) =>
+            (userEmail && b.toLowerCase() === String(userEmail).toLowerCase()) ||
+            (userPhone && String(b).includes(String(userPhone)))
+          );
+          if (isBlocked) {
+            return res.status(403).json({
+              error: "Account suspended. Please contact store support.",
+            });
+          }
+        }
+      } catch (checkErr) {
+        console.warn("Could not check blocked customer status:", checkErr);
+      }
+    }
     if (!supabase) {
       console.error("Order creation rejected: Supabase is not configured with a server-side service-role key.");
       return res.status(503).json({

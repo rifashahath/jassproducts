@@ -3,6 +3,7 @@ import { Star, CheckCircle2, XCircle, Trash2, ShieldCheck } from "lucide-react";
 import { DataTable, type ColumnDef } from "../common/DataTable.tsx";
 import {
   getStoredAdminReviews,
+  fetchAdminReviews,
   updateReviewStatus,
   deleteReview,
 } from "../../../features/admin/store/admin-store.ts";
@@ -17,6 +18,9 @@ export const ReviewsView: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    void fetchAdminReviews().then((res) => {
+      if (res && res.length > 0) setReviews(res);
+    });
     window.addEventListener("reviews_updated", loadData);
     return () => window.removeEventListener("reviews_updated", loadData);
   }, []);

@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, MessageSquare, Sparkles, MessageCircle, ExternalLink, PhoneCall } from 'lucide-react';
 import { gsap, useGSAP } from '../lib/gsap';
+import { useStoreSettings } from '../lib/store-settings';
 
 interface ContactPageProps {
   onNavigate: (page: string) => void;
 }
 
 export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
+  const { settings } = useStoreSettings();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -230,17 +232,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
                 </span>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1">
                   <a
-                    href="tel:07092203886"
+                    href={`tel:${(settings.supportPhone || '07092203886').replace(/\s+/g, '')}`}
                     className="text-xs font-semibold text-neutral-900 hover:text-[#8b6d43] transition-colors inline-flex items-center gap-1.5"
                   >
-                    <span>070922 03886</span>
-                  </a>
-                  <span className="hidden sm:inline text-neutral-300">•</span>
-                  <a
-                    href="tel:9715163119"
-                    className="text-xs font-semibold text-neutral-900 hover:text-[#8b6d43] transition-colors inline-flex items-center gap-1.5"
-                  >
-                    <span>97151 63119</span>
+                    <span>{settings.supportPhone || '070922 03886'}</span>
                   </a>
                 </div>
                 <p className="text-[11px] text-neutral-500 mt-0.5">Available for calls & direct order assistance</p>
@@ -290,10 +285,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate }) => {
                   Concierge Email
                 </span>
                 <a
-                  href="mailto:care@jassproducts.com"
+                  href={`mailto:${settings.supportEmail || 'care@jassproducts.com'}`}
                   className="text-xs font-medium text-neutral-800 hover:text-[#8b6d43] transition-colors"
                 >
-                  care@jassproducts.com
+                  {settings.supportEmail || 'care@jassproducts.com'}
                 </a>
                 <p className="text-[11px] text-neutral-500 mt-0.5">Average response: &lt; 6 hours</p>
               </div>

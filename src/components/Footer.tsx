@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { Sparkles, CheckCircle2 } from 'lucide-react';
 import { gsap, useGSAP } from '../lib/gsap';
+import { useStoreSettings } from '../lib/store-settings';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+  const { settings, cms } = useStoreSettings();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const footerRef = useRef<HTMLElement>(null);
@@ -68,12 +70,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 Authentic Botanical Dispensary
               </span>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#f9f8f4] tracking-tight">
-                JASS PRODUCTS
+                {settings.storeName || "JASS PRODUCTS"}
               </h2>
             </div>
           </div>
           <div className="max-w-xs text-xs text-[#ebe3d5]/60 leading-relaxed uppercase tracking-wider">
-            Crafted in Coimbatore, Tamil Nadu for Indian hair and scalp resilience against borewell hard water.
+            {cms.footerTagline || "Crafted in Coimbatore, Tamil Nadu for Indian hair and scalp resilience against borewell hard water."}
           </div>
         </div>
 
@@ -190,15 +192,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </li>
               <li className="pt-2 border-t border-[#2e2a26] text-xs">
                 <span className="text-[10px] font-mono tracking-widest uppercase text-[#8b6d43] block mb-1">
-                  Helpline Numbers
+                  Helpline & Support
                 </span>
                 <div className="flex flex-col gap-1 font-mono text-xs text-[#ebe3d5]/90">
-                  <a href="tel:07092203886" className="hover:text-[#8b6d43] transition-colors">
-                    070922 03886
+                  <a href={`tel:${(settings.supportPhone || '07092203886').replace(/\s+/g, '')}`} className="hover:text-[#8b6d43] transition-colors">
+                    {settings.supportPhone || '070922 03886'}
                   </a>
-                  <a href="tel:9715163119" className="hover:text-[#8b6d43] transition-colors">
-                    97151 63119
-                  </a>
+                  {settings.supportEmail && (
+                    <a href={`mailto:${settings.supportEmail}`} className="hover:text-[#8b6d43] transition-colors font-sans text-[11px] truncate">
+                      {settings.supportEmail}
+                    </a>
+                  )}
                 </div>
               </li>
             </ul>

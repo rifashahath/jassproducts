@@ -41,6 +41,11 @@ function apiDevPlugin(): Plugin {
           'cancel-order',
           'admin-product',
           'upload-image',
+          'admin-banners',
+          'admin-categories',
+          'admin-settings',
+          'admin-reviews',
+          'refund-payment',
         ];
         if (!validEndpoints.includes(endpoint)) {
           return next();

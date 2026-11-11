@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Image as ImageIcon, Plus, Edit2, Trash2, Power, ExternalLink } from "lucide-react";
 import {
   getStoredAdminBanners,
+  fetchAdminBanners,
   saveStoredAdminBanners,
+  deleteBanner,
 } from "../../../features/admin/store/admin-store.ts";
 import type { HeroBannerRecord } from "../../../types/admin.ts";
 
@@ -23,6 +25,9 @@ export const BannersView: React.FC<BannersViewProps> = ({
 
   useEffect(() => {
     loadData();
+    void fetchAdminBanners().then((res) => {
+      if (res && res.length > 0) setBanners(res);
+    });
     window.addEventListener("banners_updated", loadData);
     return () => window.removeEventListener("banners_updated", loadData);
   }, []);
@@ -33,10 +38,9 @@ export const BannersView: React.FC<BannersViewProps> = ({
     setBanners(updated);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Delete this promotional banner?")) {
-      const updated = banners.filter((b) => b.id !== id);
-      saveStoredAdminBanners(updated);
+      const updated = await deleteBanner(id);
       setBanners(updated);
     }
   };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Menu, X, Package, HelpCircle, Truck, CircleUser, Phone, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Menu, X, Package, HelpCircle, Truck, CircleUser, Phone, MessageCircle, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useStoreSettings } from '../lib/store-settings';
 
 interface NavbarProps {
   currentPage: string;
@@ -10,6 +11,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenAccount }) => {
   const { totalItemsCount, setIsCartOpen } = useCart();
+  const { cms, settings } = useStoreSettings();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -26,11 +28,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
   };
 
   return (
+    <div className="w-full flex flex-col z-30 relative">
+      {/* Top Store Announcement Bar from CMS */}
+      {cms.announcementBarActive && cms.announcementBarText && (
+        <div className="w-full bg-[#1c1b18] text-[#f4efe6] px-4 py-1.5 text-center text-[10px] sm:text-[11px] font-mono tracking-wider flex items-center justify-center gap-2 border-b border-[#8b6d43]/30">
+          <Sparkles className="w-3 h-3 text-[#d2c2ad] shrink-0" />
+          <span className="truncate">{cms.announcementBarText}</span>
+        </div>
+      )}
 
-    <header
-      id="navbar"
-      className="w-full px-6 sm:px-10 md:px-14 py-4 md:py-5 flex items-center justify-between z-30 relative"
-    >
+      <header
+        id="navbar"
+        className="w-full px-6 sm:px-10 md:px-14 py-4 md:py-5 flex items-center justify-between"
+      >
       {/* Brand Logo */}
       <div className="flex items-center">
         <button
@@ -228,6 +238,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenA
         </div>
       )}
     </header>
-
+    </div>
   );
 };

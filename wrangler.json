@@ -4,6 +4,10 @@
   "main": "src/worker.ts",
   "compatibility_date": "2026-09-24",
   "workers_dev": true,
+  "vars": {
+    "VITE_SUPABASE_URL": "https://duxjhmhgiacmuuqzfjxs.supabase.co",
+    "SUPABASE_URL": "https://duxjhmhgiacmuuqzfjxs.supabase.co"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

@@ -59,6 +59,8 @@ export const SettingsView: React.FC = () => {
 
     try {
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
+      window.dispatchEvent(new Event("settings_updated"));
+      window.dispatchEvent(new Event("storage"));
       await fetch("/api/admin-settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

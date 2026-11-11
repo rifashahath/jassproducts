@@ -3,6 +3,8 @@ import { Search, X, SlidersHorizontal, ArrowUpDown, Sparkles, Filter } from 'luc
 import { Product, fetchLiveProducts, products as defaultProducts } from '../lib/products';
 import { ProductCard } from '../components/ProductCard';
 import { gsap, useGSAP } from '../lib/gsap';
+import { getStoredAdminCategories, fetchAdminCategories } from '../features/admin/store/admin-store';
+import type { CategoryItem } from '../types/admin';
 
 interface CategoriesPageProps {
   onNavigate: (page: string, params?: Record<string, string>) => void;
@@ -13,13 +15,36 @@ type SortOption = 'featured' | 'price-asc' | 'price-desc' | 'rating';
 
 export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate, initialCategory }) => {
   const [productsList, setProductsList] = useState<Product[]>(defaultProducts);
+  const [adminCategories, setAdminCategories] = useState<CategoryItem[]>(getStoredAdminCategories);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('featured');
   const catContainerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleCatsUpdated = () => {
+      setAdminCategories(getStoredAdminCategories());
+    };
+    window.addEventListener('categories_updated', handleCatsUpdated);
+    fetchAdminCategories().then((res) => {
+      if (res && res.length > 0) setAdminCategories(res);
+    }).catch(() => {});
+    return () => window.removeEventListener('categories_updated', handleCatsUpdated);
+  }, []);
+
   const availableCategories = useMemo(() => {
-    const list = ['All', 'Lip Care', 'Face & Skin Care', 'Hair Care', 'Herbal Soaps', 'Herbal Powders'];
+    const list = ['All'];
+    // 1. Add active admin categories
+    adminCategories
+      .filter((c) => c.status !== 'INACTIVE')
+      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
+      .forEach((c) => {
+        if (!list.some((existing) => existing.toLowerCase() === c.name.toLowerCase())) {
+          list.push(c.name);
+        }
+      });
+
+    // 2. Add categories found on products
     productsList.forEach((p) => {
       if (p.category) {
         const normalized = p.category
@@ -33,7 +58,7 @@ export const CategoriesPage: React.FC<CategoriesPageProps> = ({ onNavigate, init
       }
     });
     return list;
-  }, [productsList]);
+  }, [productsList, adminCategories]);
 
   // Compute live count for each category
   const categoryCounts = useMemo(() => {

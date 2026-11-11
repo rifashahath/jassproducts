@@ -3,6 +3,7 @@ import { Save, Check, Megaphone, FileText, Store } from "lucide-react";
 import {
   getStoredCmsConfig,
   saveStoredCmsConfig,
+  fetchLiveCmsConfig,
 } from "../../../features/admin/store/admin-store.ts";
 import type { StorefrontCmsConfig } from "../../../types/admin.ts";
 
@@ -12,6 +13,9 @@ export const CmsView: React.FC = () => {
 
   useEffect(() => {
     setConfig(getStoredCmsConfig());
+    void fetchLiveCmsConfig().then((cfg) => {
+      if (cfg) setConfig(cfg);
+    });
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {

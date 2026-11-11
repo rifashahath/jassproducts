@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { CartProvider } from './context/CartContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -80,21 +81,41 @@ function MainApp() {
   const [scrollY, setScrollY] = useState(0);
 
   // Live Hero Showcase Banners from Admin Store
-  const DEFAULT_SLIDES = ['/image.webp', '/img-2.webp', '/img-3.webp', '/img-4.webp'];
-  const getBannerSlides = (): string[] => {
+  interface LiveBannerSlide {
+    imageUrl: string;
+    title?: string;
+    subtitle?: string;
+    ctaText?: string;
+    ctaLink?: string;
+  }
+
+  const DEFAULT_BANNER_SLIDES: LiveBannerSlide[] = [
+    { imageUrl: '/image.webp' },
+    { imageUrl: '/img-2.webp' },
+    { imageUrl: '/img-3.webp' },
+    { imageUrl: '/img-4.webp' },
+  ];
+
+  const getBannerSlides = (): LiveBannerSlide[] => {
     try {
       const banners = getStoredAdminBanners();
-      const activeImages = banners
+      const active = banners
         .filter((b) => b.active !== false && b.imageUrl)
         .sort((a, b) => a.displayOrder - b.displayOrder)
-        .map((b) => b.imageUrl);
-      return activeImages.length > 0 ? activeImages : DEFAULT_SLIDES;
+        .map((b) => ({
+          imageUrl: b.imageUrl,
+          title: b.title,
+          subtitle: b.subtitle,
+          ctaText: b.ctaText,
+          ctaLink: b.ctaLink,
+        }));
+      return active.length > 0 ? active : DEFAULT_BANNER_SLIDES;
     } catch {
-      return DEFAULT_SLIDES;
+      return DEFAULT_BANNER_SLIDES;
     }
   };
 
-  const [slides, setSlides] = useState<string[]>(getBannerSlides);
+  const [slides, setSlides] = useState<LiveBannerSlide[]>(getBannerSlides);
 
   useEffect(() => {
     const updateBanners = () => {
@@ -393,24 +414,57 @@ function MainApp() {
               onTouchEnd={handleTouchEnd}
               className="flex-1 mx-1.5 sm:mx-3 md:mx-4 mb-3 sm:mb-6 md:mb-8 rounded-[1.25rem] sm:rounded-[1.75rem] md:rounded-[2rem] relative overflow-hidden flex items-center justify-center bg-neutral-100 shadow-inner select-none touch-pan-y"
             >
-              {slides.map((src, index) => (
-                <img
-                  key={src}
-                  src={src}
-                  alt={`Hero Graphic ${index + 1}`}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  fetchPriority={index === 0 ? 'high' : 'low'}
-                  decoding="async"
-                  width="1024"
-                  height="434"
-                  style={{
-                    transform: `translateY(${scrollY * 0.2}px) scale(1.01)`,
-                    transformOrigin: 'top center',
-                  }}
-                  className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${
-                    index === currentSlide ? 'opacity-100' : 'opacity-0'
+              {slides.map((b, index) => (
+                <div
+                  key={`${b.imageUrl}-${index}`}
+                  className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+                    index === currentSlide ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                   }`}
-                />
+                >
+                  <img
+                    src={b.imageUrl}
+                    alt={b.title || `Hero Graphic ${index + 1}`}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={index === 0 ? 'high' : 'low'}
+                    decoding="async"
+                    width="1024"
+                    height="434"
+                    style={{
+                      transform: `translateY(${scrollY * 0.2}px) scale(1.01)`,
+                      transformOrigin: 'top center',
+                    }}
+                    className="w-full h-full object-cover object-center"
+                  />
+                  {(b.title || b.subtitle || b.ctaText) && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end p-6 sm:p-10 md:p-14 text-white z-10 pointer-events-none">
+                      {b.title && (
+                        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl font-medium tracking-wide drop-shadow-md max-w-xl">
+                          {b.title}
+                        </h2>
+                      )}
+                      {b.subtitle && (
+                        <p className="text-xs sm:text-sm text-neutral-200 font-light mt-1.5 max-w-lg drop-shadow-xs line-clamp-2">
+                          {b.subtitle}
+                        </p>
+                      )}
+                      {b.ctaText && (
+                        <div className="mt-4 pointer-events-auto">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const target = b.ctaLink ? b.ctaLink.replace(/^\//, '') : 'shop';
+                              navigateTo(target === 'shop' ? 'categories' : target);
+                            }}
+                            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white text-neutral-900 hover:bg-neutral-100 text-xs font-semibold tracking-wider uppercase transition-transform active:scale-95 shadow-md cursor-pointer"
+                          >
+                            <span>{b.ctaText}</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               ))}
 
               {/* Slide Navigation Indicator Dots */}

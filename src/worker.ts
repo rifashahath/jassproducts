@@ -116,7 +116,7 @@ export default {
             gallery: Array.isArray(body.gallery) && body.gallery.length > 0 ? body.gallery : [body.image || "/products/amla-powder/main.webp"],
             rating: body.rating ? Number(body.rating) : 5.0,
             reviews_count: body.reviewsCount || body.reviews_count || 0,
-            is_active: body.status !== "ARCHIVED" && body.is_active !== false,
+            is_active: (body.status === "PUBLISHED" || (!body.status && body.is_active !== false)) && body.status !== "DRAFT" && body.status !== "ARCHIVED" && body.is_active !== false,
             updated_at: new Date().toISOString(),
           };
 
@@ -377,6 +377,106 @@ export default {
         return jsonResponse(Array.from(customerMap.values()), 200);
       } catch (err: any) {
         return jsonResponse([], 200);
+      }
+    }
+
+    // 7. Admin Reviews endpoint
+    if (url.pathname === "/api/admin-reviews") {
+      const supabase = getSupabase(env);
+      if (request.method === "GET") {
+        try {
+          const productId = url.searchParams.get("productId");
+          const allStatus = url.searchParams.get("all") === "true";
+          let query = supabase.from("product_reviews").select("*").order("created_at", { ascending: false });
+          if (productId) query = query.eq("product_id", productId);
+          if (!allStatus) query = query.or("status.eq.published,status.eq.APPROVED");
+
+          const { data, error } = await query;
+          if (error) return jsonResponse({ error: error.message }, 500);
+
+          const formatted = (data || []).map((r: any) => ({
+            id: String(r.id),
+            productId: r.product_id,
+            productName: r.product_name || "Botanical Formulation",
+            customerName: r.author || "Verified Customer",
+            author: r.author || "Verified Customer",
+            rating: Number(r.rating || 5),
+            title: r.title || "",
+            comment: r.comment || "",
+            content: r.comment || "",
+            verified: r.verified !== false,
+            status: r.status === "published" || r.status === "APPROVED" ? "APPROVED" : (r.status === "rejected" || r.status === "REJECTED" ? "REJECTED" : "PENDING"),
+            helpfulCount: Number(r.helpful_count || 0),
+            createdAt: r.created_at,
+            date: r.created_at ? new Date(r.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Recent",
+          }));
+          return jsonResponse(formatted, 200);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || "Failed to fetch reviews" }, 500);
+        }
+      }
+
+      if (request.method === "POST") {
+        try {
+          const body: any = await request.json();
+          if (body.id && body.status) {
+            const dbStatus = body.status === "APPROVED" ? "published" : (body.status === "REJECTED" ? "rejected" : "pending");
+            const { data, error } = await supabase
+              .from("product_reviews")
+              .update({ status: dbStatus })
+              .eq("id", body.id)
+              .select();
+            if (error) return jsonResponse({ error: error.message }, 500);
+            return jsonResponse({ success: true, review: data?.[0] }, 200);
+          }
+
+          const author = String(body.author || body.customerName || "Customer").trim();
+          const rating = Math.min(5, Math.max(1, Number(body.rating) || 5));
+          const comment = String(body.comment || body.content || "").trim();
+          const productId = String(body.productId || "jp-1");
+
+          const row = {
+            product_id: productId,
+            author,
+            rating,
+            title: body.title || "",
+            comment,
+            verified: body.verified !== false,
+            status: body.status === "APPROVED" ? "published" : "pending",
+          };
+          const { data, error } = await supabase.from("product_reviews").insert(row).select();
+          if (error) return jsonResponse({ error: error.message }, 500);
+          return jsonResponse({ success: true, review: data?.[0] || row }, 200);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || "Failed to process review" }, 500);
+        }
+      }
+
+      if (request.method === "DELETE") {
+        const id = url.searchParams.get("id");
+        if (!id) return jsonResponse({ error: "Missing review id" }, 400);
+        const { error } = await supabase.from("product_reviews").delete().eq("id", String(id));
+        if (error) return jsonResponse({ error: error.message }, 500);
+        return jsonResponse({ success: true, deletedId: id }, 200);
+      }
+    }
+
+    // 8. Admin Refund endpoint
+    if (url.pathname === "/api/refund-payment" && request.method === "POST") {
+      try {
+        const supabase = getSupabase(env);
+        const body: any = await request.json();
+        const { orderId, paymentId } = body || {};
+
+        if (orderId) {
+          await supabase
+            .from("orders")
+            .update({ status: "cancelled_refunded", updated_at: new Date().toISOString() })
+            .or(`id.eq.${orderId},order_number.eq.${orderId}`);
+        }
+        return jsonResponse({ success: true, message: "Refund processed successfully.", orderId, paymentId }, 200);
+      } catch (err: any) {
+        return jsonResponse({ error: err.message || "Failed to process refund" }, 500);
       }
     }
 

@@ -30,9 +30,9 @@ export const PaymentsView: React.FC = () => {
   );
   const totalFees = totalProcessed - totalNet;
 
-  const handleRefund = async (id: string) => {
+  const handleRefund = async (id: string, orderId?: string) => {
     if (confirm("Are you sure you want to process a refund for this transaction?")) {
-      await refundPayment(id);
+      await refundPayment(id, orderId);
       loadData();
     }
   };
@@ -122,7 +122,7 @@ export const PaymentsView: React.FC = () => {
           {row.status === "SUCCESS" ? (
             <button
               type="button"
-              onClick={() => handleRefund(row.id)}
+              onClick={() => handleRefund(row.id, row.orderId)}
               className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-rose-700 hover:bg-rose-50 border border-rose-200 rounded-lg transition-colors cursor-pointer"
             >
               <RotateCcw className="h-3 w-3" />

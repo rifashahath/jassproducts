@@ -206,6 +206,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = useCallback(async (email: string, password: string) => {
     const trimmedEmail = email.trim().toLowerCase();
 
+    // Check if customer is blocked in admin console
+    try {
+      const storedCusts = typeof window !== "undefined" ? localStorage.getItem("jass_admin_customers_v1") : null;
+      if (storedCusts) {
+        const custs = JSON.parse(storedCusts);
+        const match = Array.isArray(custs) ? custs.find((c: any) => c.email && c.email.toLowerCase() === trimmedEmail) : null;
+        if (match && match.status === "BLOCKED") {
+          return { error: "This account has been suspended by store administration. Please contact support." };
+        }
+      }
+    } catch {}
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email: trimmedEmail, password });
       if (error) {

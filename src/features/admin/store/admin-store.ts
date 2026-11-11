@@ -1075,7 +1075,7 @@ export function getStoredAdminCategories(): CategoryItem[] {
 export function saveStoredAdminCategories(cats: CategoryItem[]) {
   setStored(KEYS.CATEGORIES, cats, "categories_updated");
   try {
-    fetch("/api/admin-categories", {
+    fetch(apiUrl("admin-categories"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(cats),
@@ -1085,7 +1085,7 @@ export function saveStoredAdminCategories(cats: CategoryItem[]) {
 
 export async function fetchAdminCategories(): Promise<CategoryItem[]> {
   try {
-    const res = await fetch("/api/admin-categories");
+    const res = await fetch(apiUrl("admin-categories"));
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
@@ -1103,12 +1103,14 @@ export async function saveCategory(catData: Partial<CategoryItem>): Promise<Cate
   const list = getStoredAdminCategories();
   const idx = list.findIndex((c) => c.id === catData.id);
   let updated: CategoryItem[];
+  let savedCat: CategoryItem;
   if (idx >= 0) {
+    savedCat = { ...list[idx], ...catData } as CategoryItem;
     updated = [...list];
-    updated[idx] = { ...updated[idx], ...catData } as CategoryItem;
+    updated[idx] = savedCat;
   } else {
-    const newCat = {
-      id: `cat-${Date.now().toString(36)}`,
+    savedCat = {
+      id: catData.id || `cat-${Date.now().toString(36)}`,
       name: catData.name || "New Category",
       slug: (catData.name || "new-category").toLowerCase().replace(/\s+/g, "-"),
       description: catData.description || "",
@@ -1118,9 +1120,16 @@ export async function saveCategory(catData: Partial<CategoryItem>): Promise<Cate
       productCount: 0,
       ...catData,
     } as CategoryItem;
-    updated = [...list, newCat];
+    updated = [...list, savedCat];
   }
   saveStoredAdminCategories(updated);
+  try {
+    await fetch(apiUrl("admin-categories"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(savedCat),
+    });
+  } catch {}
   return updated;
 }
 
@@ -1128,6 +1137,9 @@ export async function deleteCategory(id: string): Promise<CategoryItem[]> {
   const list = getStoredAdminCategories();
   const updated = list.filter((c) => c.id !== id);
   saveStoredAdminCategories(updated);
+  try {
+    await fetch(`${apiUrl("admin-categories")}?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+  } catch {}
   return updated;
 }
 
@@ -1243,6 +1255,14 @@ export async function toggleCustomerBlock(customerId: string): Promise<CustomerR
     return c;
   });
   saveStoredAdminCustomers(updated);
+  try {
+    const blockedIds = updated.filter((c) => c.status === "BLOCKED").map((c) => c.email || c.id);
+    void fetch(apiUrl("admin-settings"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: "blocked_customers", value: blockedIds }),
+    });
+  } catch {}
   return updated;
 }
 
@@ -1271,10 +1291,17 @@ export function saveStoredAdminPayments(payments: PaymentTransactionRecord[]) {
   setStored(KEYS.PAYMENTS, payments, "payments_updated");
 }
 
-export async function refundPayment(txnId: string): Promise<PaymentTransactionRecord[]> {
+export async function refundPayment(txnId: string, orderId?: string): Promise<PaymentTransactionRecord[]> {
   const list = getStoredAdminPayments();
   const updated = list.map((t) => (t.id === txnId ? { ...t, status: "REFUNDED" as const } : t));
   saveStoredAdminPayments(updated);
+  try {
+    await fetch(apiUrl("refund-payment"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paymentId: txnId, orderId }),
+    });
+  } catch {}
   return updated;
 }
 
@@ -1294,7 +1321,7 @@ export function getStoredAdminBanners(): HeroBannerRecord[] {
 
 export async function fetchAdminBanners(): Promise<HeroBannerRecord[]> {
   try {
-    const res = await fetch("/api/admin-banners");
+    const res = await fetch(apiUrl("admin-banners"));
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
@@ -1312,12 +1339,22 @@ export function saveStoredAdminBanners(banners: HeroBannerRecord[]) {
   setStored(KEYS.BANNERS, banners, "banners_updated");
   // Sync to Cloud Storage asynchronously
   try {
-    fetch("/api/admin-banners", {
+    fetch(apiUrl("admin-banners"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(banners),
     }).catch(() => {});
   } catch {}
+}
+
+export async function deleteBanner(id: string): Promise<HeroBannerRecord[]> {
+  const list = getStoredAdminBanners();
+  const updated = list.filter((b) => b.id !== id);
+  saveStoredAdminBanners(updated);
+  try {
+    await fetch(`${apiUrl("admin-banners")}?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+  } catch {}
+  return updated;
 }
 
 // 9. REVIEWS
@@ -1329,10 +1366,33 @@ export function saveStoredAdminReviews(reviews: ReviewRecord[]) {
   setStored(KEYS.REVIEWS, reviews, "reviews_updated");
 }
 
+export async function fetchAdminReviews(): Promise<ReviewRecord[]> {
+  try {
+    const res = await fetch(`${apiUrl("admin-reviews")}?all=true`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        saveStoredAdminReviews(data);
+        return data;
+      }
+    }
+  } catch (err) {
+    console.warn("fetchAdminReviews error:", err);
+  }
+  return getStoredAdminReviews();
+}
+
 export async function updateReviewStatus(reviewId: string, status: ReviewRecord["status"]): Promise<ReviewRecord[]> {
   const list = getStoredAdminReviews();
   const updated = list.map((r) => (r.id === reviewId ? { ...r, status } : r));
   saveStoredAdminReviews(updated);
+  try {
+    await fetch(apiUrl("admin-reviews"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: reviewId, status }),
+    });
+  } catch {}
   return updated;
 }
 
@@ -1340,6 +1400,9 @@ export async function deleteReview(reviewId: string): Promise<ReviewRecord[]> {
   const list = getStoredAdminReviews();
   const updated = list.filter((r) => r.id !== reviewId);
   saveStoredAdminReviews(updated);
+  try {
+    await fetch(`${apiUrl("admin-reviews")}?id=${encodeURIComponent(reviewId)}`, { method: "DELETE" });
+  } catch {}
   return updated;
 }
 
@@ -1350,6 +1413,29 @@ export function getStoredCmsConfig(): StorefrontCmsConfig {
 
 export function saveStoredCmsConfig(config: StorefrontCmsConfig) {
   setStored(KEYS.CMS, config, "cms_updated");
+  try {
+    fetch(apiUrl("admin-settings"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: "cms_config", value: config }),
+    }).catch(() => {});
+  } catch {}
+}
+
+export async function fetchLiveCmsConfig(): Promise<StorefrontCmsConfig> {
+  try {
+    const res = await fetch(apiUrl("admin-settings"));
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.cms_config) {
+        saveStoredCmsConfig(data.cms_config);
+        return data.cms_config;
+      }
+    }
+  } catch (err) {
+    console.warn("fetchLiveCmsConfig error:", err);
+  }
+  return getStoredCmsConfig();
 }
 
 // 11. STAFF & USERS
